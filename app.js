@@ -222,6 +222,11 @@ async function start() {
     }
   };
 
+  if (process.env.IN_PASSENGER === '1') {
+    // cPanel's Passenger node-loader only attaches when asked for its socket.
+    return app.listen('passenger', onListening);
+  }
+
   if (isSocket) return app.listen(port, onListening);
   return app.listen(port, config.host, onListening);
 }

@@ -152,7 +152,7 @@ if yours does not, ask the host to enable Node.js support.
 ### Automated deploys (GitHub → cPanel)
 
 `.github/workflows/ci-cd.yml` tests every push and pull request on Node 22 and 24.
-A push to `main` that passes the tests is pushed to the cPanel-managed Git
+A push to `master` that passes the tests is pushed to the cPanel-managed Git
 repository, whose post-receive hook runs `.cpanel.yml`: it syncs the code, runs
 `npm ci --omit=dev` inside the cPanel Node virtualenv and restarts Passenger.
 Live `.env`, `data/site.db` and `public/uploads/` are never touched.
@@ -215,7 +215,7 @@ fallback if Actions is unavailable.
   `example.com/site` would need extra configuration.
 - Do not enable multiple Node processes: the SQLite database is written by a
   single process. Passenger's default single-worker mode is correct.
-- Upgrades: push to `main` and let Actions deploy, or replace the code, run
+- Upgrades: push to `master` and let Actions deploy, or replace the code, run
   `npm install` again, keep `data/` and `public/uploads/`, then restart.
 - If the app shows *503* after deployment, check the Node.js app log in cPanel;
   the usual causes are a missing `.env`, a wrong startup file, or a Node version
@@ -272,7 +272,7 @@ restart. **This deletes all content.**
 ## Project structure
 
 ```
-.github/workflows/ci-cd.yml  Tests, then deploys main to cPanel
+.github/workflows/ci-cd.yml  Tests, then deploys master to cPanel
 .cpanel.yml            cPanel deployment tasks (sync, install, restart)
 app.js                 Express bootstrap, middleware, error handling
 config.js              Environment configuration

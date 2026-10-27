@@ -1,6 +1,6 @@
 # CI/CD: GitHub Actions → cPanel
 
-Every push to `main` is tested, pushed to the cPanel-managed Git repository, and
+Every push to `master` is tested, pushed to the cPanel-managed Git repository, and
 deployed by cPanel's post-receive hook. Live content, uploads and secrets stay on
 the server.
 
@@ -21,7 +21,7 @@ Health check: GET <SITE_URL>/robots.txt == 200
 ```
 
 Pull requests run the tests but never deploy. Manual runs deploy only when they
-are started from `main`.
+are started from `master`.
 
 ## What a deploy changes
 
@@ -42,7 +42,7 @@ deploy, as you would before any release.
 ## One-time setup
 
 Prerequisites: the domain serves the app through cPanel **Setup Node.js App**, SSH
-is enabled, and the code is in a GitHub repository whose default branch is `main`.
+is enabled, and the code is in a GitHub repository whose default branch is `master`.
 
 ### 1. Create the Node.js application
 
@@ -115,15 +115,15 @@ The workflow creates the `production` environment on first use. Add required
 reviewers under **Settings → Environments → production** if deploys should need
 approval.
 
-### 5. Push `main`
+### 5. Push `master`
 
-The first push to `main` deploys. Watch **Actions → CI/CD**; the deploy job log
+The first push to `master` deploys. Watch **Actions → CI/CD**; the deploy job log
 includes the remote post-receive output from cPanel.
 
 ## Day-to-day
 
 ```bash
-git checkout main
+git checkout master
 git pull
 # change files, run npm test
 git commit -am "Update ..."
@@ -177,6 +177,6 @@ The database is not versioned. To restore content, upload a backup of
   secrets, never in the repository, and rotate it if exposed.
 - `CPANEL_KNOWN_HOSTS` pins the server key and prevents man-in-the-middle hosts.
 - The cPanel repository is a deployment target, not a place to commit. The
-  workflow force-pushes it so it always mirrors the tested `main` commit.
+  workflow force-pushes it so it always mirrors the tested `master` commit.
 - Secrets are unavailable to pull requests from forks; the deploy job also requires
-  `main` and a successful test job.
+  `master` and a successful test job.

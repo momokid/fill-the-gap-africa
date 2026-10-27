@@ -1,8 +1,8 @@
 # CI/CD to cPanel — 2026-10-27
 
 ## Done
-- `.github/workflows/ci-cd.yml`: tests on Node 22 and 24, then deploys `main`
-  (or a manual run from `main`) by SSH force-pushing the tested commit to the
+- `.github/workflows/ci-cd.yml`: tests on Node 22 and 24, then deploys `master`
+  (or a manual run from `master`) by SSH force-pushing the tested commit to the
   cPanel-managed Git repository. Pull requests test only. Health check hits
   `<SITE_URL>/robots.txt` after the push.
 - `.cpanel.yml`: cPanel post-receive tasks rsync only code directories, copy the
@@ -20,7 +20,7 @@
   hook runs `.cpanel.yml`, so the workflow needs no remote shell scripts.
 - The app root is a whitelist sync, not `rsync --delete` on the whole folder, so
   `.env`, `data/site.db`, uploads and host-specific files cannot be removed.
-- The workflow force-pushes because GitHub `main` is the source of truth and the
+- The workflow force-pushes because GitHub `master` is the source of truth and the
   cPanel repo is a deploy target.
 - No third-party GitHub actions for SSH; plain OpenSSH and git keep the supply
   chain small.

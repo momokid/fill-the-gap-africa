@@ -6,6 +6,7 @@ npm-debug.log*
 AGENTS.local.md
 
 # Runtime data (keep the folders, not their contents)
+nodevenv/
 data/*.db
 data/*.db.tmp
 public/uploads/*

@@ -2,7 +2,7 @@ name: CI/CD
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
   workflow_dispatch:
 
@@ -38,7 +38,7 @@ jobs:
     name: Deploy to cPanel
     needs: test
     if: >-
-      github.ref == 'refs/heads/main' &&
+      github.ref == 'refs/heads/master' &&
       (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -100,7 +100,7 @@ jobs:
             # Follow the branch cPanel has checked out, so push deployment fires.
             BRANCH=$($SSH_CMD "$SSH_USER@$SSH_HOST" "git -C '$REPO_PATH' symbolic-ref --short HEAD 2>/dev/null" || true)
           fi
-          BRANCH="${BRANCH:-main}"
+          BRANCH="${BRANCH:-master}"
           echo "Deploying $(git rev-parse --short HEAD) to ${SSH_HOST}:${REPO_PATH} (${BRANCH})"
           git remote add cpanel "ssh://${SSH_USER}@${SSH_HOST}:${SSH_PORT}${REPO_PATH}"
           GIT_SSH_COMMAND="$SSH_CMD" git push --force cpanel "HEAD:refs/heads/${BRANCH}"

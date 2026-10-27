@@ -33,7 +33,7 @@ deployment:
     - /bin/cp "$REPO_ROOT/app.js" "$REPO_ROOT/config.js" "$REPO_ROOT/package.json" "$REPO_ROOT/package-lock.json" "$REPO_ROOT/.env.example" "$DEPLOYPATH/"
 
     # Install production dependencies inside the cPanel Node.js virtualenv.
-    - 'export NODEVENV="$(ls -d "$HOME"/nodevenv/"$APP_NAME"/*/bin/activate 2>/dev/null | head -n 1)"'
+    - 'export NODEVENV="$(ls -d "$HOME"/nodevenv/"$APP_NAME"/*/bin/activate 2>/dev/null | sort -V | tail -n 1)"'
     - 'if [ -z "$NODEVENV" ]; then echo "No cPanel Node.js virtualenv at ~/nodevenv/$APP_NAME"; exit 1; fi'
     - '. "$NODEVENV" && cd "$DEPLOYPATH" && npm ci --omit=dev --no-audit --no-fund'
 

@@ -17,7 +17,7 @@ SSH push of the tested commit → ~/repositories/<repo> on cPanel
 .cpanel.yml: rsync code → npm ci --omit=dev → touch tmp/restart.txt
         │
         ▼
-Health check: GET <SITE_URL>/robots.txt == 200
+Health check: <SITE_URL>/robots.txt contains the app's Sitemap line
 ```
 
 Pull requests run the tests but never deploy. Manual runs deploy only when they
@@ -168,7 +168,7 @@ The database is not versioned. To restore content, upload a backup of
 | `No cPanel Node.js virtualenv at ~/nodevenv/...` | `APP_NAME` does not match the application root, or the Node.js app was not created. |
 | `rsync is required on the server` | Ask the host to install `rsync` (standard on cPanel/CloudLinux). |
 | 503 after deploy | cPanel → Setup Node.js App → log. Usually a missing `.env`, wrong startup file, or an unsupported Node version. |
-| Health check fails but the site loads | `SITE_URL` is wrong, or `/robots.txt` is blocked by a proxy/WAF. |
+| Health check fails but the site loads | `/robots.txt` is still the cPanel placeholder (“It works!”), so the deploy did not run; check the cPanel hook output and `.cpanel.yml`. Also confirm `SITE_URL`. |
 | Deploy times out during `npm ci` | Slow shared host. Retry from **Actions → Run workflow**; if it repeats, replace `npm ci` with `npm install --omit=dev` in `.cpanel.yml`. |
 
 ## Security notes

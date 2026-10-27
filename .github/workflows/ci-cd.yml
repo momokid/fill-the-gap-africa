@@ -51,6 +51,9 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          # A shallow clone cannot be pushed; cPanel needs the full history.
+          fetch-depth: 0
 
       - name: Configure SSH
         env:
@@ -115,14 +118,15 @@ jobs:
             exit 0
           fi
           URL="${SITE_URL%/}/robots.txt"
+          BODY_FILE="$(mktemp)"
           for attempt in $(seq 1 30); do
-            CODE=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "$URL" || true)
-            if [ "$CODE" = "200" ]; then
-              echo "Health check passed: $URL returned 200."
+            CODE=$(curl -sS -o "$BODY_FILE" -w '%{http_code}' --max-time 20 "$URL" || true)
+            if [ "$CODE" = "200" ] && grep -q 'Sitemap:' "$BODY_FILE"; then
+              echo "Health check passed: the app is serving $URL."
               exit 0
             fi
-            echo "Attempt $attempt: $URL returned ${CODE:-no response}; retrying..."
+            echo "Attempt $attempt: app not live yet (HTTP ${CODE:-no response}); retrying..."
             sleep 6
           done
-          echo "::error::Health check failed: $URL did not return 200."
+          echo "::error::Health check failed: $URL is not serving the app (still the placeholder?)."
           exit 1

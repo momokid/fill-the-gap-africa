@@ -38,6 +38,13 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  // HTML is rendered per request and can carry CSRF tokens; never let a proxy
+  // cache it. express.static overrides this for cacheable assets below.
+  res.setHeader('Cache-Control', 'no-store');
+  next();
+});
+
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(express.json({ limit: '2mb' }));
 
@@ -145,6 +152,21 @@ app.use((req, res, next) => {
     "SELECT title, slug FROM programs WHERE status = 'published' ORDER BY sort_order ASC, id ASC LIMIT 5"
   );
 
+  next();
+});
+
+// Studio pages contain CSRF tokens and session state; shared caches must never
+// store them. Setting a session marker also forces a Set-Cookie on every studio
+// response, which keeps URL-keyed proxy caches from serving a cookieless copy.
+app.use((req, res, next) => {
+  const base = req.adminBase || config.adminPath;
+  if (req.path === base || req.path.startsWith(base + '/')) {
+    res.setHeader('Cache-Control', 'no-store, private');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Vary', 'Cookie');
+    if (req.session) req.session.seenAt = Date.now();
+  }
   next();
 });
 

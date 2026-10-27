@@ -71,6 +71,7 @@ class Client {
     return {
       status: response.status,
       location: response.headers.get('location') || '',
+      headers: response.headers,
       text: await response.text()
     };
   }
@@ -295,6 +296,20 @@ test('signed-out studio requests are redirected to the login form', async () => 
   const response = await visitor.get(`${ADMIN}/settings`);
   assert.equal(response.status, 302);
   assert.ok(response.location.startsWith(`${ADMIN}/login?next=`), response.location);
+});
+
+test('studio responses cannot be cached by a shared proxy', async () => {
+  const visitor = new Client();
+  const page = await visitor.get(`${ADMIN}/login`);
+  assert.equal(page.status, 200);
+  assert.match(page.headers.get('cache-control') || '', /no-store/);
+  assert.match(page.headers.get('vary') || '', /cookie/i);
+  assert.ok(page.headers.getSetCookie().length > 0, 'login sets a session cookie');
+
+  const redirect = await visitor.get(`${ADMIN}/settings`);
+  assert.equal(redirect.status, 302);
+  assert.match(redirect.headers.get('cache-control') || '', /no-store/);
+  assert.ok(redirect.headers.getSetCookie().length > 0, 'redirect sets a session cookie');
 });
 
 test('wrong credentials are rejected', async () => {

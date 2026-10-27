@@ -14,6 +14,12 @@
 - `docs/deploy-cicd.md`: one-time setup (Node app, cPanel repo, deploy key,
   secrets/variables), rollback, troubleshooting. README links it; manual cPanel
   steps kept as fallback.
+- Deployed to `fillthegapafrica.org` at `1d83373`: home and sitemap return 200,
+  studio redirects to login (302), robots serves the real app.
+- Two host-specific fixes: cPanel has no `rsync` (deploy uses `rm` + `cp`), and
+  Passenger loads `app.js` as a module with no `PORT`. The app now starts when
+  required and listens on `'passenger'`; without both, Passenger returned
+  “Web application could not be started”.
 
 ## Decisions
 - Chose cPanel push deployment instead of rsync-over-SSH: cPanel's post-receive
@@ -26,7 +32,8 @@
   chain small.
 
 ## Open
-- Live host values are not configured yet: cPanel user/host, repo path, deploy
-  key, `SITE_URL`, and the GitHub origin remote. First real deploy is untested.
-- `APP_NAME` in `.cpanel.yml` assumes the app root is `fillthegap-africa-site`.
-- Back up `data/site.db`, `public/uploads/` and `.env` before the first deploy.
+- GitHub `master` is behind cPanel by the rsync/Passenger commits; push them so
+  the next Actions run (a no-op deploy) exercises the full pipeline.
+- Change the first admin password and add SMTP details in `.env`.
+- Back up `data/site.db`, `public/uploads/` and `.env`; the site now holds live
+  content created by the first start.

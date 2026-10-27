@@ -217,6 +217,9 @@ fallback if Actions is unavailable.
   single process. Passenger's default single-worker mode is correct.
 - Upgrades: push to `master` and let Actions deploy, or replace the code, run
   `npm install` again, keep `data/` and `public/uploads/`, then restart.
+- cPanel's Passenger loads `app.js` as a module and does not provide `PORT`.
+  `app.js` detects `IN_PASSENGER` and calls `listen('passenger')`; keep that
+  block, or Passenger returns “Web application could not be started”.
 - If the app shows *503* after deployment, check the Node.js app log in cPanel;
   the usual causes are a missing `.env`, a wrong startup file, or a Node version
   below 18.
@@ -228,7 +231,7 @@ fallback if Actions is unavailable.
 | Variable | Default | Purpose |
 | --- | --- | --- |
 | `NODE_ENV` | development | Set to `production` on the server |
-| `PORT` | `3000` | Port to listen on (Passenger sets this automatically) |
+| `PORT` | `3000` | Local port; under Passenger the app uses its socket instead |
 | `BASE_URL` | request host | Public site URL, used for canonical links, sharing and sitemap |
 | `SESSION_SECRET` | insecure default | **Set this.** Signs session cookies |
 | `COOKIE_SECURE` | `false` | Set `true` when serving over HTTPS |

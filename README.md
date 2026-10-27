@@ -220,6 +220,9 @@ fallback if Actions is unavailable.
 - cPanel's Passenger loads `app.js` as a module and does not provide `PORT`.
   `app.js` detects `IN_PASSENGER` and calls `listen('passenger')`; keep that
   block, or Passenger returns “Web application could not be started”.
+- Some hosts cache HTML by URL. The app sends `Cache-Control: no-store` and the
+  studio forces a session cookie; if an old login page is still cached, change
+  the admin path under Settings → Security to a fresh path.
 - If the app shows *503* after deployment, check the Node.js app log in cPanel;
   the usual causes are a missing `.env`, a wrong startup file, or a Node version
   below 18.

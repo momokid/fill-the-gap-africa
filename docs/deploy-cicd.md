@@ -170,6 +170,7 @@ The database is not versioned. To restore content, upload a backup of
 | 503 after deploy | cPanel → Setup Node.js App → log. Usually a missing `.env`, wrong startup file, or an unsupported Node version. |
 | Health check fails but the site loads | `/robots.txt` is still the cPanel placeholder (“It works!”), so the deploy did not run; check the cPanel hook output and `.cpanel.yml`. Also confirm `SITE_URL`. |
 | Deploy times out during `npm ci` | Slow shared host. Retry from **Actions → Run workflow**; if it repeats, replace `npm ci` with `npm install --omit=dev` in `.cpanel.yml`. |
+| Studio login loops or shows “Session expired” (403) | A host proxy cached the login page with an old CSRF token. The app sends `no-store`; change the admin path under Settings → Security (or `.env` plus the `admin_path` setting) to a fresh path, or ask the host to purge its cache. |
 
 ## Security notes
 

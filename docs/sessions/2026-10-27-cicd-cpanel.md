@@ -20,6 +20,10 @@
   Passenger loads `app.js` as a module with no `PORT`. The app now starts when
   required and listens on `'passenger'`; without both, Passenger returned
   “Web application could not be started”.
+- The host proxy caches HTML by URL and served an old login page with a stale
+  CSRF token. The app now sends `Cache-Control: no-store` for HTML and forces a
+  session cookie in the studio. The cached `/ftga-studio` entries are abandoned:
+  the live admin path is `/ftga-studio-2` (DB setting + `.env`).
 
 ## Decisions
 - Chose cPanel push deployment instead of rsync-over-SSH: cPanel's post-receive

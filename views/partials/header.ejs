@@ -17,7 +17,11 @@
 				<div class="primary-nav__panel">
 					<div class="primary-nav__top">
 						<a class="brand" href="/" rel="home">
-							<%- h.logoMark(36) %>
+							<% if (site.logo) { %>
+								<img class="brand-logo brand-logo--nav" src="<%= site.logo %>" alt="<%= site.site_name %>">
+							<% } else { %>
+								<%- h.logoMark(36) %>
+							<% } %>
 							<span class="brand__text">
 								<span class="brand__name"><%= site.site_name %></span>
 							</span>

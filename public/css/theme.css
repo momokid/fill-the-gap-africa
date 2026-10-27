@@ -180,6 +180,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .brand-mark { flex: none; display: block; border-radius: 8px; }
 .brand-logo { max-height: 40px; width: auto; display: block; }
 .brand-logo--footer { max-height: 44px; }
+.primary-nav__top .brand-logo { max-height: 36px; }
 .brand__text { display: flex; flex-direction: column; gap: 1px; line-height: 1.1; }
 .brand__name { font-family: var(--display); font-size: 16.5px; font-weight: 600; letter-spacing: -.02em; color: var(--ink); }
 .brand__sub { font-family: var(--mono); font-size: 1rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }

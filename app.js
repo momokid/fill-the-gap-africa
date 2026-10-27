@@ -231,7 +231,7 @@ async function start() {
   return app.listen(port, config.host, onListening);
 }
 
-if (require.main === module) {
+if (require.main === module || process.env.IN_PASSENGER === '1') {
   start().catch((error) => {
     console.error('Failed to start:', error);
     process.exit(1);

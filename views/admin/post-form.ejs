@@ -1,0 +1,142 @@
+<%- include('partials/head') %>
+
+<% const isNew = !post.id; %>
+<% const isEvent = post.type === 'event'; %>
+
+<form class="form" method="post" action="<%= isNew ? adminBase + '/posts' : adminBase + '/posts/' + post.id %>" enctype="multipart/form-data">
+	<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+	<input type="hidden" name="type" value="<%= isEvent ? 'event' : 'post' %>">
+
+	<% if (errors.length) { %>
+		<ul class="form-errors">
+			<% errors.forEach(function (error) { %><li><%= error %></li><% }); %>
+		</ul>
+	<% } %>
+
+	<div class="form-grid">
+		<div class="form-grid__main">
+			<div class="card">
+				<div class="card__body">
+					<div class="form">
+						<p class="field">
+							<label for="title">Title</label>
+							<input type="text" id="title" name="title" value="<%= post.title || '' %>" required>
+						</p>
+
+						<p class="field">
+							<label for="slug">URL slug</label>
+							<input type="text" id="slug" name="slug" value="<%= post.slug || '' %>" placeholder="generated from the title if left empty">
+							<span class="hint">Keep it short and readable. Changing it changes the public link.</span>
+						</p>
+
+						<p class="field">
+							<label for="excerpt">Summary</label>
+							<textarea id="excerpt" name="excerpt" rows="3" maxlength="400"><%= post.excerpt || '' %></textarea>
+							<span class="hint">Used on cards, in search results and in link previews. One or two sentences.</span>
+						</p>
+
+						<%- include('partials/editor', {
+							name: 'content',
+							value: post.content || '',
+							label: isEvent ? 'Event details' : 'Story',
+							hint: 'Use headings to break up longer pieces. Links and lists are supported.'
+						}) %>
+					</div>
+				</div>
+			</div>
+
+			<% if (isEvent) { %>
+				<div class="card">
+					<div class="card__head"><h2>When &amp; where</h2></div>
+					<div class="card__body">
+						<div class="form">
+							<div class="field-row">
+								<p class="field">
+									<label for="event_start">Starts</label>
+									<input type="datetime-local" id="event_start" name="event_start" value="<%= h.dateInput(post.event_start) %>" required>
+								</p>
+								<p class="field">
+									<label for="event_end">Ends (optional)</label>
+									<input type="datetime-local" id="event_end" name="event_end" value="<%= h.dateInput(post.event_end) %>">
+								</p>
+							</div>
+							<p class="field">
+								<label for="event_location">Location</label>
+								<input type="text" id="event_location" name="event_location" value="<%= post.event_location || '' %>" placeholder="Katiu Saa Community Centre, Greater Accra">
+							</p>
+							<span class="hint">Times are shown in Ghana time (GMT).</span>
+						</div>
+					</div>
+				</div>
+			<% } %>
+		</div>
+
+		<div class="form-grid__aside">
+			<div class="card">
+				<div class="card__head"><h2>Publishing</h2></div>
+				<div class="card__body">
+					<div class="form">
+						<p class="field">
+							<label for="status">Status</label>
+							<select id="status" name="status">
+								<option value="draft" <%= post.status !== 'published' ? 'selected' : '' %>>Draft</option>
+								<option value="published" <%= post.status === 'published' ? 'selected' : '' %>>Published</option>
+							</select>
+						</p>
+
+						<p class="field">
+							<label for="published_at">Publish date</label>
+							<input type="datetime-local" id="published_at" name="published_at" value="<%= h.dateInput(post.published_at) %>">
+							<span class="hint">Leave empty to use now when publishing.</span>
+						</p>
+
+						<p class="field">
+							<label for="category"><%= isEvent ? 'Event type' : 'Category' %></label>
+							<input type="text" id="category" name="category" value="<%= post.category || '' %>" placeholder="<%= isEvent ? 'Health' : 'Field notes' %>">
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="card">
+				<div class="card__head"><h2>Cover image</h2></div>
+				<div class="card__body">
+					<div class="upload" data-upload>
+						<div class="upload__preview" data-preview>
+							<% if (post.cover) { %>
+								<img src="<%= post.cover %>" alt="">
+							<% } else { %>
+								<span class="upload__empty"><%- h.icon('image', 18) %> No image yet</span>
+							<% } %>
+						</div>
+						<input type="file" name="cover" accept="image/jpeg,image/png,image/webp,image/gif,image/avif">
+						<span class="hint">JPG, PNG, WebP or GIF. Up to 8 MB. Landscape works best.</span>
+						<% if (post.cover) { %>
+							<label class="field--check" style="display:flex; margin-top:4px;">
+								<input type="checkbox" name="remove_cover" value="1">
+								<span>Remove current image</span>
+							</label>
+						<% } %>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-actions">
+				<button class="button button--primary" type="submit">Save</button>
+				<% if (!isNew && post.status === 'published') { %>
+					<a class="button" href="<%= isEvent ? '/events/' : '/stories/' %><%= post.slug %>" target="_blank" rel="noopener">View</a>
+				<% } %>
+				<a class="link-quiet" href="<%= adminBase %>/posts<%= isEvent ? '?type=event' : '' %>">Cancel</a>
+			</div>
+		</div>
+	</div>
+</form>
+
+<% if (!isNew) { %>
+	<form method="post" action="<%= adminBase %>/posts/<%= post.id %>/delete" data-confirm="Delete “<%= post.title %>”? This cannot be undone." style="margin-top: 6px;">
+		<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+		<button class="button button--danger button--sm" type="submit">Delete this <%= isEvent ? 'event' : 'post' %></button>
+	</form>
+<% } %>
+
+<%- include('partials/foot') %>

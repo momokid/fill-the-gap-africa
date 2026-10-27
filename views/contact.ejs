@@ -1,0 +1,153 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<%- include('partials/page-hero', {
+	title: page.title,
+	eyebrow: page.hero_eyebrow,
+	titleHtml: h.inline(page.hero_title || page.title),
+	lede: page.hero_lede
+}) %>
+
+<section class="section contact">
+	<div class="container contact__grid">
+		<div class="contact__form-wrap">
+			<h2 class="contact__heading"><%= site.contact_form_title %></h2>
+
+			<form class="contact-form" id="contact-form" method="post" action="/contact" novalidate>
+				<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+				<% if (sent) { %>
+					<div class="notice notice--success" role="status" aria-live="polite">
+						<%- h.icon('check', 18) %>
+						<%= site.contact_success %>
+					</div>
+				<% } %>
+
+				<% if (errors && errors.length) { %>
+					<ul class="form-errors" role="alert">
+						<% errors.forEach(function (error) { %><li><%= error %></li><% }); %>
+					</ul>
+				<% } %>
+
+				<div class="field-row">
+					<p class="field">
+						<label for="name">Your name <span aria-hidden="true">*</span></label>
+						<input type="text" id="name" name="name" value="<%= old.name || '' %>" autocomplete="name" required>
+					</p>
+					<p class="field">
+						<label for="email">Email <span aria-hidden="true">*</span></label>
+						<input type="email" id="email" name="email" value="<%= old.email || '' %>" autocomplete="email" required>
+					</p>
+				</div>
+
+				<div class="field-row">
+					<p class="field">
+						<label for="phone">Phone (optional)</label>
+						<input type="tel" id="phone" name="phone" value="<%= old.phone || '' %>" autocomplete="tel">
+					</p>
+					<p class="field">
+						<label for="topic">What is this about?</label>
+						<select id="topic" name="topic">
+							<% var topics = h.jsonTexts(site.contact_topics, 'label'); %>
+							<% if (!topics.length) topics = ['General enquiry']; %>
+							<% topics.forEach(function (topic) { %>
+								<option value="<%= topic %>" <%= (old.topic === topic) ? 'selected' : '' %>><%= topic %></option>
+							<% }); %>
+						</select>
+					</p>
+				</div>
+
+				<p class="field">
+					<label for="message">Message <span aria-hidden="true">*</span></label>
+					<textarea id="message" name="message" rows="6" required><%= old.message || '' %></textarea>
+				</p>
+
+				<p class="field field--honeypot" aria-hidden="true">
+					<label for="website">Leave this field empty</label>
+					<input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+				</p>
+
+				<div class="contact-form__footer">
+					<button class="btn btn--primary" type="submit">
+						<%= site.contact_submit_label %>
+						<%- h.icon('arrow-right', 18) %>
+					</button>
+					<p class="contact-form__note"><%= site.contact_form_note %></p>
+				</div>
+			</form>
+		</div>
+
+		<aside class="contact__aside">
+			<div class="contact-card">
+				<h2 class="contact-card__title"><%= site.contact_aside_title %></h2>
+				<ul class="contact-list">
+					<li>
+						<span class="contact-list__icon"><%- h.icon('pin', 18) %></span>
+						<div>
+							<span class="contact-list__label">Office</span>
+							<span class="contact-list__value"><%= site.contact_address.replace(/\n/g, ', ') %></span>
+						</div>
+					</li>
+					<li>
+						<span class="contact-list__icon"><%- h.icon('phone', 18) %></span>
+						<div>
+							<span class="contact-list__label">Phone</span>
+							<a class="contact-list__value" href="tel:<%= site.contact_phone.replace(/[^0-9+]/g, '') %>"><%= site.contact_phone %></a>
+						</div>
+					</li>
+					<li>
+						<span class="contact-list__icon"><%- h.icon('mail', 18) %></span>
+						<div>
+							<span class="contact-list__label">Email</span>
+							<a class="contact-list__value" href="mailto:<%= site.contact_email %>"><%= site.contact_email %></a>
+						</div>
+					</li>
+					<li>
+						<span class="contact-list__icon"><%- h.icon('clock', 18) %></span>
+						<div>
+							<span class="contact-list__label">Hours</span>
+							<span class="contact-list__value"><%= site.contact_hours %></span>
+						</div>
+					</li>
+				</ul>
+
+				<% if (socials.length) { %>
+					<div class="contact-card__socials">
+						<span class="contact-list__label">Follow our work</span>
+						<ul>
+							<% socials.forEach(function (social) { %>
+								<li>
+									<a href="<%= social.url %>" target="_blank" rel="noopener noreferrer">
+										<%- h.icon(social.key, 16) %>
+										<span><%= social.label %></span>
+									</a>
+								</li>
+							<% }); %>
+						</ul>
+					</div>
+				<% } %>
+			</div>
+
+			<p class="contact__note"><%= site.contact_note %></p>
+		</aside>
+	</div>
+
+	<% if (site.contact_map === '1') { %>
+		<div class="container">
+			<div class="map">
+				<iframe
+					title="Map of Accra, Ghana"
+					src="https://www.openstreetmap.org/export/embed.html?bbox=-0.2269%2C5.5737%2C-0.1469%2C5.6337&amp;layer=mapnik&amp;marker=5.6037%2C-0.1870"
+					loading="lazy"
+					referrerpolicy="no-referrer-when-downgrade"></iframe>
+				<div class="map__caption">
+					<%- h.icon('pin', 16) %>
+					<span><%= site.contact_map_caption %></span>
+					<a href="https://www.openstreetmap.org/?mlat=5.6037&amp;mlon=-0.1870#map=13/5.6037/-0.1870" target="_blank" rel="noopener noreferrer">Open in maps</a>
+				</div>
+			</div>
+		</div>
+	<% } %>
+</section>
+
+<%- include('partials/footer') %>

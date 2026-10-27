@@ -1,0 +1,75 @@
+	<header id="masthead" class="site-header" data-header>
+		<div class="container header__inner">
+			<div class="brand-wrap">
+				<a class="brand" href="/" rel="home">
+					<% if (site.logo) { %>
+						<img class="brand-logo" src="<%= site.logo %>" alt="<%= site.site_name %>">
+					<% } else { %>
+						<%- h.logoMark(42) %>
+					<% } %>
+					<span class="brand__text">
+						<span class="brand__name"><%= site.site_name %></span>
+					</span>
+				</a>
+			</div>
+
+			<nav id="site-navigation" class="primary-nav" aria-label="Primary">
+				<div class="primary-nav__panel">
+					<div class="primary-nav__top">
+						<a class="brand" href="/" rel="home">
+							<%- h.logoMark(36) %>
+							<span class="brand__text">
+								<span class="brand__name"><%= site.site_name %></span>
+							</span>
+						</a>
+						<button class="nav-close" type="button" data-nav-close aria-label="Close menu">
+							<%- h.icon('close', 18) %>
+						</button>
+					</div>
+					<p class="primary-nav__label">Menu</p>
+					<ul class="menu">
+						<% nav.forEach(function (item) { %>
+							<% var activeClass = h.active(item.url, currentPath); %>
+							<li class="menu-item<%= activeClass ? ' is-active' : '' %>">
+								<a href="<%= item.url %>"<%- activeClass ? ' aria-current="page"' : '' %>><%= item.label %></a>
+							</li>
+						<% }); %>
+					</ul>
+					<div class="primary-nav__extra">
+						<a class="btn btn--accent btn--block" href="/donate">
+							Donate
+							<%- h.icon('heart', 17) %>
+						</a>
+						<div class="primary-nav__contact">
+							<a href="tel:<%= site.contact_phone.replace(/[^0-9+]/g, '') %>"><%= site.contact_phone %></a>
+							<a href="mailto:<%= site.contact_email %>"><%= site.contact_email %></a>
+						</div>
+						<div class="primary-nav__socials">
+							<% socials.forEach(function (social) { %>
+								<a href="<%= social.url %>" target="_blank" rel="noopener noreferrer" aria-label="<%= social.label %>">
+									<%- h.icon(social.key, 18) %>
+								</a>
+							<% }); %>
+						</div>
+					</div>
+				</div>
+			</nav>
+
+			<div class="header__actions">
+				<a class="header__phone" href="tel:<%= site.contact_phone.replace(/[^0-9+]/g, '') %>">
+					<%- h.icon('phone', 15) %>
+					<span><%= site.contact_phone %></span>
+				</a>
+				<a class="btn btn--accent btn--header" href="/donate">
+					<span>Donate</span>
+					<%- h.icon('arrow-right', 16) %>
+				</a>
+				<button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-navigation" data-nav-toggle>
+					<span class="nav-toggle__label">Menu</span>
+					<span class="nav-toggle__bars" aria-hidden="true"><span></span><span></span></span>
+				</button>
+			</div>
+		</div>
+	</header>
+
+	<main id="main" class="site-main">

@@ -1,0 +1,30 @@
+{
+  "name": "fill-the-gap-africa-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fill The Gap Africa — website and admin CMS (Node.js, no native build tools).",
+  "main": "app.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js",
+    "check": "node --check app.js",
+    "test": "node test/site.test.js",
+    "smoke": "node scripts/smoke-test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-session": "^2.1.1",
+    "dotenv": "^16.6.1",
+    "ejs": "^3.1.10",
+    "express": "^4.22.3",
+    "multer": "^2.5.0",
+    "nodemailer": "^6.10.1",
+    "sanitize-html": "^2.18.1",
+    "sql.js": "^1.15.2"
+  }
+}

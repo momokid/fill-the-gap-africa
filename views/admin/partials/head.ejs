@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title><%= title %>, Content studio</title>
+	<meta name="robots" content="noindex, nofollow">
+	<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Inter:wght@400;500;600;700&display=swap">
+	<link rel="stylesheet" href="/css/admin.css?v=7">
+</head>
+<body>
+<div class="admin">
+	<aside class="sidebar" id="admin-sidebar">
+ <a class="sidebar__brand" href="<%= adminBase %>">
+ <% if (site.logo) { %><img class="brand-logo" src="<%= site.logo %>" alt=""><% } else { %><%- h.logoMark(36) %><% } %>
+ <span>
+ <span class="sidebar__brand-name"><%= site.site_name %></span>
+ <span class="sidebar__brand-sub">Content studio</span>
+ </span>
+ </a>
+
+ <nav class="sidebar__nav" aria-label="Admin">
+ <span class="sidebar__label">Overview</span>
+ <a class="nav-item <%= section === 'dashboard' ? 'is-active' : '' %>" href="<%= adminBase %>">
+ <%- h.icon('grid', 17) %> Dashboard
+ </a>
+
+ <% if (canEdit) { %>
+ <span class="sidebar__label">Content</span>
+ <a class="nav-item <%= section === 'posts' ? 'is-active' : '' %>" href="<%= adminBase %>/posts">
+ <%- h.icon('file', 17) %> Posts
+ </a>
+ <a class="nav-item <%= section === 'events' ? 'is-active' : '' %>" href="<%= adminBase %>/posts?type=event">
+ <%- h.icon('calendar', 17) %> Events
+ </a>
+ <a class="nav-item <%= section === 'pages' ? 'is-active' : '' %>" href="<%= adminBase %>/pages">
+ <%- h.icon('edit', 17) %> Pages
+ </a>
+ <a class="nav-item <%= section === 'programs' ? 'is-active' : '' %>" href="<%= adminBase %>/programs">
+ <%- h.icon('book', 17) %> Programs
+ </a>
+ <a class="nav-item <%= section === 'team' ? 'is-active' : '' %>" href="<%= adminBase %>/team">
+ <%- h.icon('users', 17) %> Team
+ </a>
+ <a class="nav-item <%= section === 'media' ? 'is-active' : '' %>" href="<%= adminBase %>/media">
+ <%- h.icon('image', 17) %> Media
+ </a>
+ <% } %>
+
+ <span class="sidebar__label">Inbox</span>
+ <a class="nav-item <%= section === 'messages' ? 'is-active' : '' %>" href="<%= adminBase %>/messages">
+ <%- h.icon('inbox', 17) %> Messages
+ <% if (typeof unreadMessages !== 'undefined' && unreadMessages > 0) { %>
+ <span class="nav-item__badge"><%= unreadMessages %></span>
+ <% } %>
+ </a>
+
+ <span class="sidebar__label">Site</span>
+ <% if (canAdmin) { %>
+ <a class="nav-item <%= section === 'users' ? 'is-active' : '' %>" href="<%= adminBase %>/users">
+ <%- h.icon('users', 17) %> Users &amp; roles
+ </a>
+ <a class="nav-item <%= section === 'settings' ? 'is-active' : '' %>" href="<%= adminBase %>/settings">
+ <%- h.icon('settings', 17) %> Settings
+ </a>
+ <% } %>
+ <a class="nav-item <%= section === 'profile' ? 'is-active' : '' %>" href="<%= adminBase %>/profile">
+ <%- h.icon('users', 17) %> Your account
+ </a>
+ </nav>
+
+ <div class="sidebar__foot">
+ <a class="nav-item" href="/" target="_blank" rel="noopener">
+ <%- h.icon('external', 16) %> View site
+ </a>
+ <form method="post" action="<%= adminBase %>/logout">
+ <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+ <button class="nav-item" type="submit"><%- h.icon('logout', 16) %> Log out</button>
+ </form>
+ </div>
+	</aside>
+
+	<div class="admin__main">
+ <header class="topbar-admin">
+ <button class="nav-burger" type="button" data-admin-menu aria-label="Toggle menu">
+ <%- h.icon('menu', 18) %>
+ </button>
+ <h1><%= title %></h1>
+ <div class="topbar-admin__user">
+ <span><%= currentUser ? currentUser.name : '' %></span>
+ <span class="topbar-admin__avatar"><%= currentUser ? h.initials(currentUser.name) : 'FG' %></span>
+ </div>
+ </header>
+
+ <main class="admin__content">
+ <% if (flash) { %>
+ <div class="flash flash--<%= flash.type === 'success' ? 'success' : 'error' %>" role="status">
+ <%- h.icon(flash.type === 'success' ? 'check' : 'close', 17) %>
+ <span><%= flash.message %></span>
+ </div>
+ <% } %>

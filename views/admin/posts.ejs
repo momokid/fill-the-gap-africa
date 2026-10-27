@@ -1,0 +1,84 @@
+<%- include('partials/head') %>
+
+<div class="page-head">
+	<div>
+		<h2><%= type === 'event' ? 'Events' : type === 'post' ? 'Posts' : 'All content' %></h2>
+		<p class="page-head__desc">Write field notes, publish announcements and schedule events. Drafts are only visible to signed-in editors.</p>
+	</div>
+	<div class="actions">
+		<a class="button" href="<%= adminBase %>/posts?type=post">Posts</a>
+		<a class="button" href="<%= adminBase %>/posts?type=event">Events</a>
+		<a class="button button--primary" href="<%= adminBase %>/posts/new<%= type === 'event' ? '?type=event' : '' %>">
+			<%- h.icon('plus', 15) %> <%= type === 'event' ? 'New event' : 'New post' %>
+		</a>
+	</div>
+</div>
+
+<div class="tabs">
+	<a class="<%= type === 'all' ? 'is-active' : '' %>" href="<%= adminBase %>/posts">All</a>
+	<a class="<%= type === 'post' ? 'is-active' : '' %>" href="<%= adminBase %>/posts?type=post">Posts</a>
+	<a class="<%= type === 'event' ? 'is-active' : '' %>" href="<%= adminBase %>/posts?type=event">Events</a>
+	<span style="flex:1"></span>
+	<a class="<%= status === 'all' ? 'is-active' : '' %>" href="<%= adminBase %>/posts?type=<%= type %>">Any status</a>
+	<a class="<%= status === 'published' ? 'is-active' : '' %>" href="<%= adminBase %>/posts?type=<%= type %>&status=published">Published</a>
+	<a class="<%= status === 'draft' ? 'is-active' : '' %>" href="<%= adminBase %>/posts?type=<%= type %>&status=draft">Drafts</a>
+</div>
+
+<div class="card">
+	<div class="table-wrap">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Title</th>
+					<th>Type</th>
+					<th>Status</th>
+					<th>Date</th>
+					<th style="text-align:right;">Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% if (posts.length) { %>
+					<% posts.forEach(function (post) { %>
+						<tr>
+							<td>
+								<a class="table__title" href="<%= adminBase %>/posts/<%= post.id %>/edit"><%= post.title %></a>
+								<span class="table__sub">/<%= post.slug %></span>
+							</td>
+							<td><span class="badge badge--type"><%= post.type === 'event' ? 'Event' : 'Post' %></span></td>
+							<td><span class="badge badge--<%= post.status %>"><%= post.status %></span></td>
+							<td>
+								<span class="table__sub" style="margin:0;">
+									<%= h.formatDate(post.type === 'event' ? post.event_start : (post.published_at || post.created_at), 'short') %>
+								</span>
+							</td>
+							<td>
+								<div class="table__actions">
+									<% if (post.status === 'published') { %>
+										<a class="button button--sm" href="<%= post.type === 'event' ? '/events/' : '/stories/' %><%= post.slug %>" target="_blank" rel="noopener">View</a>
+									<% } %>
+									<a class="button button--sm" href="<%= adminBase %>/posts/<%= post.id %>/edit">Edit</a>
+									<form method="post" action="<%= adminBase %>/posts/<%= post.id %>/delete" data-confirm="Delete “<%= post.title %>”? This cannot be undone.">
+										<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+										<button class="button button--sm button--danger" type="submit">Delete</button>
+									</form>
+								</div>
+							</td>
+						</tr>
+					<% }); %>
+				<% } else { %>
+					<tr>
+						<td colspan="5">
+							<div class="empty-a">
+								<h3>Nothing here yet</h3>
+								<p>Create your first <%= type === 'event' ? 'event' : 'post' %> to get started.</p>
+								<a class="button button--primary" href="<%= adminBase %>/posts/new<%= type === 'event' ? '?type=event' : '' %>">Create one</a>
+							</div>
+						</td>
+					</tr>
+				<% } %>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<%- include('partials/foot') %>

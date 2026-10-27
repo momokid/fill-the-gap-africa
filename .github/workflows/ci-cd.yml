@@ -1,0 +1,128 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run route tests
+        run: npm test
+
+  deploy:
+    name: Deploy to cPanel
+    needs: test
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: production
+      url: ${{ vars.SITE_URL || 'https://fillthegapafrica.org' }}
+    concurrency:
+      group: cpanel-production
+      cancel-in-progress: false
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Configure SSH
+        env:
+          SSH_KEY: ${{ secrets.CPANEL_SSH_KEY }}
+          SSH_HOST: ${{ secrets.CPANEL_SSH_HOST }}
+          SSH_PORT: ${{ secrets.CPANEL_SSH_PORT || '22' }}
+          KNOWN_HOSTS: ${{ secrets.CPANEL_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SSH_KEY:-}" ] || [ -z "${SSH_HOST:-}" ]; then
+            echo "::error::Set CPANEL_SSH_KEY and CPANEL_SSH_HOST in repository secrets."
+            exit 1
+          fi
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$SSH_KEY" > "$HOME/.ssh/cpanel_deploy"
+          chmod 600 "$HOME/.ssh/cpanel_deploy"
+          if [ -n "${KNOWN_HOSTS:-}" ]; then
+            printf '%s\n' "$KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          else
+            ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" 2>/dev/null > "$HOME/.ssh/known_hosts"
+          fi
+          if [ ! -s "$HOME/.ssh/known_hosts" ]; then
+            echo "::error::Could not read the server host key. Set CPANEL_KNOWN_HOSTS."
+            exit 1
+          fi
+          chmod 600 "$HOME/.ssh/known_hosts"
+
+      - name: Push to cPanel
+        env:
+          SSH_USER: ${{ secrets.CPANEL_SSH_USER }}
+          SSH_HOST: ${{ secrets.CPANEL_SSH_HOST }}
+          SSH_PORT: ${{ secrets.CPANEL_SSH_PORT || '22' }}
+          REPO_PATH: ${{ secrets.CPANEL_REPO_PATH }}
+          BRANCH_OVERRIDE: ${{ vars.CPANEL_BRANCH }}
+        run: |
+          set -euo pipefail
+          case "$REPO_PATH" in
+            /*) ;;
+            *)
+              echo "::error::CPANEL_REPO_PATH must be an absolute path, for example /home/USER/repositories/ngo-site."
+              exit 1
+              ;;
+          esac
+          SSH_CMD="ssh -i $HOME/.ssh/cpanel_deploy -p $SSH_PORT -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes"
+          BRANCH="${BRANCH_OVERRIDE:-}"
+          if [ -z "$BRANCH" ]; then
+            # Follow the branch cPanel has checked out, so push deployment fires.
+            BRANCH=$($SSH_CMD "$SSH_USER@$SSH_HOST" "git -C '$REPO_PATH' symbolic-ref --short HEAD 2>/dev/null" || true)
+          fi
+          BRANCH="${BRANCH:-main}"
+          echo "Deploying $(git rev-parse --short HEAD) to ${SSH_HOST}:${REPO_PATH} (${BRANCH})"
+          git remote add cpanel "ssh://${SSH_USER}@${SSH_HOST}:${SSH_PORT}${REPO_PATH}"
+          GIT_SSH_COMMAND="$SSH_CMD" git push --force cpanel "HEAD:refs/heads/${BRANCH}"
+
+      - name: Health check
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SITE_URL:-}" ]; then
+            echo "SITE_URL is not set; skipping the health check."
+            exit 0
+          fi
+          URL="${SITE_URL%/}/robots.txt"
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            CODE=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "$URL" || true)
+            if [ "$CODE" = "200" ]; then
+              echo "Health check passed: $URL returned 200."
+              exit 0
+            fi
+            echo "Attempt $attempt: $URL returned ${CODE:-no response}; retrying..."
+            sleep 6
+          done
+          echo "::error::Health check failed: $URL did not return 200."
+          exit 1

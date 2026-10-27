@@ -1,0 +1,20 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<%- include('partials/page-hero', {
+	title: page.title,
+	eyebrow: page.hero_eyebrow,
+	titleHtml: h.inline(page.hero_title || page.title),
+	lede: page.hero_lede
+}) %>
+
+<section class="section section--page">
+	<div class="container prose-wrap">
+		<article class="prose">
+			<%- page.content %>
+		</article>
+	</div>
+</section>
+
+<%- include('partials/cta') %>
+<%- include('partials/footer') %>

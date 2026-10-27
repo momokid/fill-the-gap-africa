@@ -1,0 +1,159 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<%- include('partials/page-hero', {
+	title: page.title,
+	eyebrow: page.hero_eyebrow,
+	titleHtml: h.inline(page.hero_title || page.title),
+	lede: page.hero_lede
+}) %>
+
+<section class="section about-story">
+	<div class="container about-story__grid">
+ <article class="prose">
+ <%- page.content %>
+ </article>
+
+ <aside class="facts-card" aria-label="Organization facts">
+ <h2 class="facts-card__title"><%= site.about_facts_title %></h2>
+ <dl class="facts-card__list">
+ <% h.jsonList(site.about_facts).forEach(function (fact) { %>
+ <div>
+ <dt><%= fact.label %></dt>
+ <dd><%= fact.value %></dd>
+ </div>
+ <% }); %>
+ </dl>
+ <a class="btn btn--ghost btn--block" href="/impact">See our impact <%- h.icon('arrow-right', 16) %></a>
+ </aside>
+	</div>
+</section>
+
+<% var aboutPhotos = h.jsonList(site.about_photos); %>
+<% if (aboutPhotos.length) { %>
+<section class="section section--photos">
+	<div class="container">
+ <div class="photo-strip">
+ <% aboutPhotos.forEach(function (photo) { %>
+ <figure>
+ <img src="<%= photo.image %>" alt="<%= photo.alt || '' %>" loading="lazy" decoding="async">
+ </figure>
+ <% }); %>
+ </div>
+	</div>
+</section>
+<% } %>
+
+<% var aboutValues = h.jsonList(site.about_values); %>
+<% if (aboutValues.length) { %>
+<section class="section values">
+	<div class="container">
+ <div class="section-head">
+ <div class="section-head__main">
+ <p class="kicker"><span>02</span> <%= site.about_values_kicker %></p>
+ <h2 class="display"><%- h.inline(site.about_values_title) %></h2>
+ </div>
+ <div class="section-head__aside">
+ <p><%= site.about_values_note %></p>
+ </div>
+ </div>
+
+ <div class="values-grid">
+ <% aboutValues.forEach(function (value, index) { %>
+ <div class="value">
+ <span class="value__num"><%= String(index + 1).padStart(2, '0') %></span>
+ <h3 class="value__title"><%= value.title %></h3>
+ <p class="value__text"><%= value.text %></p>
+ </div>
+ <% }); %>
+ </div>
+	</div>
+</section>
+<% } %>
+
+<% var aboutSteps = h.jsonList(site.approach_steps); %>
+<% if (aboutSteps.length) { %>
+<section class="section approach">
+	<div class="container">
+ <div class="section-head section-head--tight">
+ <div class="section-head__main">
+ <p class="kicker"><span>03</span> <%= site.approach_kicker %></p>
+ <h2 class="display"><%- h.inline(site.approach_title) %></h2>
+ </div>
+ <div class="section-head__aside">
+ <p><%= site.approach_note %></p>
+ </div>
+ </div>
+
+ <ol class="steps">
+ <% aboutSteps.forEach(function (step, index) { %>
+ <li class="step">
+ <span class="step__num"><%= String(index + 1).padStart(2, '0') %></span>
+ <h3 class="step__title"><%= step.title %></h3>
+ <p class="step__text"><%= step.text %></p>
+ </li>
+ <% }); %>
+ </ol>
+	</div>
+</section>
+<% } %>
+
+<% if (members.length) { %>
+<section class="section team">
+	<div class="container">
+ <div class="section-head">
+ <div class="section-head__main">
+ <p class="kicker"><span>04</span> <%= site.about_team_kicker %></p>
+ <h2 class="display"><%- h.inline(site.about_team_title) %></h2>
+ </div>
+ <div class="section-head__aside">
+ <p><%= site.about_team_note %></p>
+ <a class="link-arrow" href="mailto:<%= site.contact_email %>">Work with us <%- h.icon('arrow-right', 16) %></a>
+ </div>
+ </div>
+
+ <ul class="team-grid">
+ <% members.forEach(function (member) { %>
+ <li class="team-card">
+ <div class="team-card__media">
+ <% if (member.photo) { %>
+ <img src="<%= member.photo %>" alt="<%= member.name %>" loading="lazy" decoding="async">
+ <% } else { %>
+ <span class="team-card__pattern" aria-hidden="true"></span>
+ <span class="team-card__initials" aria-hidden="true"><%= member.initials || h.initials(member.name) %></span>
+ <% } %>
+ </div>
+ <div class="team-card__body">
+ <h3 class="team-card__name"><%= member.name %></h3>
+ <p class="team-card__role"><%= member.role %></p>
+ <p class="team-card__bio"><%= member.bio %></p>
+ </div>
+ </li>
+ <% }); %>
+ </ul>
+	</div>
+</section>
+<% } %>
+
+<% if (partners.length) { %>
+<section class="partners">
+	<div class="container">
+ <div class="partners__head">
+ <p class="kicker kicker--muted"><%= site.partners_title %></p>
+ <p class="partners__note"><%= site.partners_note %></p>
+ </div>
+ <ul class="partners__list">
+ <% partners.forEach(function (partner, index) { %>
+ <li class="partner">
+ <span class="partner__mark" aria-hidden="true"><%= h.initials(partner.name) %></span>
+ <span class="partner__name"><% if (partner.url) { %><a href="<%= partner.url %>" target="_blank" rel="noopener noreferrer"><%= partner.name %></a><% } else { %><%= partner.name %><% } %></span>
+ <span class="partner__meta">Partner <%= String(index + 1).padStart(2, '0') %></span>
+ </li>
+ <% }); %>
+ </ul>
+	</div>
+</section>
+<% } %>
+
+<%- include('partials/cta') %>
+<%- include('partials/footer') %>

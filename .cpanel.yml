@@ -1,0 +1,44 @@
+---
+# cPanel Git Version Control deployment tasks.
+#
+# cPanel installs a post-receive hook on its managed repository, so every push
+# from GitHub Actions runs this file. Only application code is copied: the live
+# .env, data/ and public/uploads/ are never overwritten or deleted.
+#
+# APP_NAME is the Node.js application root relative to the cPanel home folder.
+# It must match the folder used in cPanel > Setup Node.js App, because cPanel
+# creates the virtualenv at ~/nodevenv/<APP_NAME>/<version>.
+deployment:
+  tasks:
+    - export APP_NAME="fillthegap-africa-site"
+    - export DEPLOYPATH="$HOME/$APP_NAME"
+    - export REPO_ROOT="$PWD"
+
+    # Fail early if the host lacks rsync instead of half-deploying the code.
+    - 'command -v rsync >/dev/null 2>&1 || { echo "rsync is required on the server"; exit 1; }'
+
+    # The app root and its writable folders must exist before the first sync.
+    - /bin/mkdir -p "$DEPLOYPATH/data" "$DEPLOYPATH/public/uploads" "$DEPLOYPATH/tmp"
+
+    # Code directories: --delete removes files that were removed from Git.
+    - rsync -a --delete "$REPO_ROOT/lib/" "$DEPLOYPATH/lib/"
+    - rsync -a --delete "$REPO_ROOT/routes/" "$DEPLOYPATH/routes/"
+    - rsync -a --delete "$REPO_ROOT/views/" "$DEPLOYPATH/views/"
+    - rsync -a --delete "$REPO_ROOT/scripts/" "$DEPLOYPATH/scripts/"
+    - rsync -a --delete "$REPO_ROOT/public/css/" "$DEPLOYPATH/public/css/"
+    - rsync -a --delete "$REPO_ROOT/public/js/" "$DEPLOYPATH/public/js/"
+    - rsync -a --delete "$REPO_ROOT/public/img/" "$DEPLOYPATH/public/img/"
+
+    # Top-level code files. .env is deliberately absent.
+    - /bin/cp "$REPO_ROOT/app.js" "$REPO_ROOT/config.js" "$REPO_ROOT/package.json" "$REPO_ROOT/package-lock.json" "$REPO_ROOT/.env.example" "$DEPLOYPATH/"
+
+    # Install production dependencies inside the cPanel Node.js virtualenv.
+    - 'export NODEVENV="$(ls -d "$HOME"/nodevenv/"$APP_NAME"/*/bin/activate 2>/dev/null | head -n 1)"'
+    - 'if [ -z "$NODEVENV" ]; then echo "No cPanel Node.js virtualenv at ~/nodevenv/$APP_NAME"; exit 1; fi'
+    - '. "$NODEVENV" && cd "$DEPLOYPATH" && npm ci --omit=dev --no-audit --no-fund'
+
+    # data/ and public/uploads/ are written by the app, not by the deploy.
+    - /bin/chmod -R u+rwX "$DEPLOYPATH/data" "$DEPLOYPATH/public/uploads"
+
+    # Passenger restarts the app when this timestamp changes.
+    - /usr/bin/touch "$DEPLOYPATH/tmp/restart.txt"

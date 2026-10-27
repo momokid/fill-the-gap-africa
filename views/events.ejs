@@ -1,0 +1,40 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<%- include('partials/page-hero', {
+	title: 'Events',
+	eyebrow: 'What’s next',
+	titleHtml: 'Come see the work.',
+	lede: 'Community screenings, training cohorts and partner events. Everyone is welcome, most are free.'
+}) %>
+
+<section class="section section--events">
+	<div class="container">
+ <section class="events-section">
+ <h2 class="events-section__title"><%- h.icon('calendar', 14) %> Upcoming</h2>
+ <% if (upcoming.length) { %>
+ <div class="event-list">
+ <% upcoming.forEach(function (event) { %>
+ <%- include('partials/event-row', { event: event }) %>
+ <% }); %>
+ </div>
+ <% } else { %>
+ <p style="color: var(--muted);">No events are scheduled right now. Follow us on Facebook for updates.</p>
+ <% } %>
+ </section>
+
+ <% if (past.length) { %>
+ <section class="events-section">
+ <h2 class="events-section__title"><%- h.icon('clock', 14) %> Past events</h2>
+ <div class="event-list">
+ <% past.forEach(function (event) { %>
+ <%- include('partials/event-row', { event: event }) %>
+ <% }); %>
+ </div>
+ </section>
+ <% } %>
+	</div>
+</section>
+
+<%- include('partials/cta') %>
+<%- include('partials/footer') %>

@@ -1,0 +1,114 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<%- include('partials/page-hero', {
+	title: page.title,
+	eyebrow: page.hero_eyebrow,
+	titleHtml: h.inline(page.hero_title || page.title),
+	lede: page.hero_lede
+}) %>
+
+<section class="stats-band" aria-label="Our impact in numbers">
+	<div class="container">
+ <div class="stats-band__head">
+ <span class="stats-band__label"><%= site.stats_label %></span>
+ <span class="stats-band__meta"><%= site.stats_meta %></span>
+ </div>
+ <ul class="stats">
+ <% stats.forEach(function (stat) { %>
+ <li class="stat">
+ <span class="stat__value"><%= stat.value %></span>
+ <span class="stat__label"><%= stat.label %></span>
+ </li>
+ <% }); %>
+ </ul>
+	</div>
+</section>
+
+<% var impactOutcomes = h.jsonList(site.impact_outcomes); %>
+<% if (impactOutcomes.length) { %>
+<section class="section outcomes">
+	<div class="container">
+ <div class="section-head">
+ <div class="section-head__main">
+ <p class="kicker"><span>02</span> <%= site.impact_outcomes_kicker %></p>
+ <h2 class="display"><%- h.inline(site.impact_outcomes_title) %></h2>
+ </div>
+ <div class="section-head__aside">
+ <p><%= site.impact_outcomes_note %></p>
+ </div>
+ </div>
+
+ <div class="outcomes-grid">
+ <% impactOutcomes.forEach(function (outcome) { %>
+ <article class="outcome">
+ <span class="outcome__icon"><%- h.icon(outcome.icon || 'spark', 24) %></span>
+ <span class="outcome__value"><%= outcome.value %></span>
+ <h3 class="outcome__title"><%= outcome.title %></h3>
+ <p class="outcome__text"><%= outcome.text %></p>
+ </article>
+ <% }); %>
+ </div>
+	</div>
+</section>
+<% } %>
+
+<% var impactChecks = h.jsonList(site.impact_checks); %>
+<% if (impactChecks.length) { %>
+<section class="section accountability">
+	<div class="container accountability__grid">
+ <div class="accountability__head">
+ <p class="kicker"><span>03</span> <%= site.impact_checks_kicker %></p>
+ <h2 class="display"><%- h.inline(site.impact_checks_title) %></h2>
+ <p class="accountability__lede"><%= site.impact_checks_note %></p>
+ </div>
+ <ol class="accountability__list">
+ <% impactChecks.forEach(function (check, index) { %>
+ <li>
+ <span class="accountability__num"><%= String(index + 1).padStart(2, '0') %></span>
+ <div>
+ <h3><%= check.title %></h3>
+ <p><%= check.text %></p>
+ </div>
+ </li>
+ <% }); %>
+ </ol>
+	</div>
+</section>
+<% } %>
+
+<section class="section story">
+	<div class="container story__grid">
+ <div class="story__visual">
+ <div class="story__meta">
+ <span class="story__place"><%= site.story_place %></span>
+ <span class="story__tag"><%= site.story_tag %></span>
+ </div>
+ <div class="story__stat">
+ <span class="story__stat-value"><%= site.hero_stat_value %></span>
+ <span class="story__stat-label"><%= site.hero_stat_label %></span>
+ </div>
+ </div>
+
+ <div class="story__content">
+ <p class="kicker"><span>04</span> <%= site.story_kicker %></p>
+ <h2 class="display"><%- h.inline(site.story_title) %></h2>
+ <p class="lede"><%= site.story_lede %></p>
+ <p><%= site.story_body %></p>
+ <% var storyPoints = h.jsonTexts(site.story_points); %>
+ <% if (storyPoints.length) { %>
+ <ul class="check-list">
+ <% storyPoints.forEach(function (point) { %>
+ <li><%= point %></li>
+ <% }); %>
+ </ul>
+ <% } %>
+ <% if (site.story_link_label) { %>
+ <a class="btn btn--ghost" href="<%= site.story_link_url || '/stories' %>"><%= site.story_link_label %> <%- h.icon('arrow-right', 16) %></a>
+ <% } %>
+ </div>
+	</div>
+</section>
+
+<%- include('partials/cta') %>
+<%- include('partials/footer') %>

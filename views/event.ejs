@@ -1,0 +1,91 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<%- include('partials/page-hero', {
+	title: event.title,
+	eyebrow: 'Event',
+	titleHtml: event.title,
+	lede: event.excerpt,
+	metaList: [h.formatDate(event.event_start, 'long'), event.event_location],
+	crumb: { label: 'Events', url: '/events' }
+}) %>
+
+<article class="section event-detail">
+	<div class="container event-detail__grid">
+ <div>
+ <% if (event.cover) { %>
+ <figure class="single-program__media">
+ <img src="<%= event.cover %>" alt="<%= event.title %>" loading="eager" decoding="async">
+ </figure>
+ <% } %>
+
+ <div class="event-detail__meta">
+ <span class="event-badge"><%- h.icon('calendar', 12) %> <%= h.isUpcoming(event.event_start) ? 'Upcoming' : 'Past event' %></span>
+ <% if (event.category) { %><span class="event-badge event-badge--muted"><%= event.category %></span><% } %>
+ </div>
+
+ <div class="prose" style="margin-top: 28px;">
+ <%- event.content %>
+ </div>
+ </div>
+
+ <aside class="event-facts">
+ <h2 class="event-facts__title">When &amp; where</h2>
+ <dl>
+ <div>
+ <dt>Date</dt>
+ <dd><%= h.formatDate(event.event_start, 'full') %></dd>
+ </div>
+ <div>
+ <dt>Time</dt>
+ <dd><%= h.formatTime(event.event_start) %><% if (event.event_end) { %> to <%= h.formatTime(event.event_end) %><% } %> GMT</dd>
+ </div>
+ <% if (event.event_location) { %>
+ <div>
+ <dt>Location</dt>
+ <dd><%= event.event_location %></dd>
+ </div>
+ <% } %>
+ <div>
+ <dt>Admission</dt>
+ <dd>Free and open to all</dd>
+ </div>
+ </dl>
+
+ <a class="btn btn--primary btn--block" href="mailto:<%= site.contact_email %>?subject=<%= encodeURIComponent('Event: ' + event.title) %>">
+ Ask about this event
+ <%- h.icon('mail', 16) %>
+ </a>
+ </aside>
+	</div>
+</article>
+
+<% if (others.length) { %>
+	<section class="section related">
+ <div class="container">
+ <div class="section-head section-head--tight">
+ <div class="section-head__main">
+ <p class="kicker">Also coming up</p>
+ <h2 class="display">More <em>events</em>.</h2>
+ </div>
+ </div>
+ <div class="event-teaser">
+ <% others.forEach(function (item) { %>
+ <a class="event-teaser__item" href="/events/<%= item.slug %>">
+ <span class="event-date event-date--dark">
+ <span class="event-date__day"><%= h.formatDate(item.event_start, 'short').split(' ')[0] %></span>
+ <span class="event-date__month"><%= h.formatDate(item.event_start, 'short').split(' ')[1] %></span>
+ </span>
+ <span class="event-teaser__body">
+ <h3><%= item.title %></h3>
+ <p><%= h.formatDate(item.event_start) %><% if (item.event_location) { %> · <%= item.event_location %><% } %></p>
+ </span>
+ </a>
+ <% }); %>
+ </div>
+ </div>
+	</section>
+<% } %>
+
+<%- include('partials/cta') %>
+<%- include('partials/footer') %>

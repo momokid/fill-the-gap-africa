@@ -1,0 +1,44 @@
+<%- include('partials/head') %>
+
+<div class="page-head">
+	<div>
+ <h2>Team</h2>
+ <p class="page-head__desc">Leadership and program leads. Without a photo, the card shows the person’s initials, which still looks intentional.</p>
+	</div>
+	<div class="actions">
+ <a class="button button--primary" href="<%= adminBase %>/team/new"><%- h.icon('plus', 15) %> Add person</a>
+	</div>
+</div>
+
+<div class="card">
+	<div class="table-wrap">
+ <table class="table">
+ <thead>
+ <tr><th>Name</th><th>Role</th><th>Status</th><th style="text-align:right;">Actions</th></tr>
+ </thead>
+ <tbody>
+ <% members.forEach(function (member) { %>
+ <tr>
+ <td>
+ <a class="table__title" href="<%= adminBase %>/team/<%= member.id %>/edit"><%= member.name %></a>
+ <span class="table__sub"><%= member.initials || h.initials(member.name) %></span>
+ </td>
+ <td><span class="table__sub" style="margin:0;"><%= member.role %></span></td>
+ <td><span class="badge badge--<%= member.status %>"><%= member.status %></span></td>
+ <td>
+ <div class="table__actions">
+ <a class="button button--sm" href="<%= adminBase %>/team/<%= member.id %>/edit">Edit</a>
+ <form method="post" action="<%= adminBase %>/team/<%= member.id %>/delete" data-confirm="Remove <%= member.name %> from the team?">
+ <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+ <button class="button button--sm button--danger" type="submit">Delete</button>
+ </form>
+ </div>
+ </td>
+ </tr>
+ <% }); %>
+ </tbody>
+ </table>
+	</div>
+</div>
+
+<%- include('partials/foot') %>

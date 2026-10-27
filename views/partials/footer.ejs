@@ -1,0 +1,92 @@
+	</main>
+
+	<footer class="site-footer" id="colophon">
+		<div class="container">
+			<div class="footer__grid">
+				<div class="footer__brand">
+					<a class="brand brand--footer" href="/" rel="home">
+						<% if (site.logo) { %>
+							<img class="brand-logo brand-logo--footer" src="<%= site.logo %>" alt="<%= site.site_name %>">
+						<% } else { %>
+							<%- h.logoMark(44) %>
+						<% } %>
+						<span class="brand__text">
+							<span class="brand__name"><%= site.site_name %></span>
+						</span>
+					</a>
+					<p class="footer__tagline"><%= site.footer_tagline %></p>
+					<% if (socials.length) { %>
+						<ul class="footer__socials">
+							<% socials.forEach(function (social) { %>
+								<li>
+									<a href="<%= social.url %>" target="_blank" rel="noopener noreferrer" aria-label="<%= social.label %>">
+										<%- h.icon(social.key, 17) %>
+									</a>
+								</li>
+							<% }); %>
+						</ul>
+					<% } %>
+				</div>
+
+				<div class="footer__col">
+					<h2 class="footer__title">Explore</h2>
+					<ul class="footer__list">
+						<% nav.forEach(function (item) { %>
+							<% var activeClass = h.active(item.url, currentPath); %>
+							<li><a href="<%= item.url %>"<%- activeClass ? ' class="is-active" aria-current="page"' : '' %>><%= item.label %></a></li>
+						<% }); %>
+					</ul>
+				</div>
+
+				<div class="footer__col">
+					<h2 class="footer__title">Programs</h2>
+					<ul class="footer__list">
+						<% footerPrograms.forEach(function (program) { %>
+							<li><a href="/programs/<%= program.slug %>"><%= program.title %></a></li>
+						<% }); %>
+					</ul>
+				</div>
+
+				<div class="footer__col">
+					<h2 class="footer__title">Contact</h2>
+					<ul class="footer__list footer__list--contact">
+						<li>
+							<%- h.icon('pin', 16) %>
+							<span><%= site.contact_address.replace(/\n/g, ', ') %></span>
+						</li>
+						<li>
+							<%- h.icon('phone', 16) %>
+							<a href="tel:<%= site.contact_phone.replace(/[^0-9+]/g, '') %>"><%= site.contact_phone %></a>
+						</li>
+						<li>
+							<%- h.icon('mail', 16) %>
+							<a href="mailto:<%= site.contact_email %>"><%= site.contact_email %></a>
+						</li>
+					</ul>
+					<a class="btn btn--footer" href="/donate">
+						Support our work
+						<%- h.icon('arrow-up-right', 15) %>
+					</a>
+				</div>
+			</div>
+
+			<div class="footer__bottom">
+				<p class="footer__legal">
+					&copy; <%= year %> <%= site.site_name %>. <%= site.legal_text %>
+				</p>
+				<ul class="footer__legal-menu">
+					<li><a href="/privacy">Privacy</a></li>
+					<li><a href="/search">Search</a></li>
+				</ul>
+				<a class="footer__top" href="#top" data-back-to-top>
+					Back to top
+					<%- h.icon('arrow-up-right', 14) %>
+				</a>
+			</div>
+		</div>
+	</footer>
+</div>
+
+<script src="/js/theme.js?v=1" defer></script>
+</body>
+</html>

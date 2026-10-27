@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Error, Content studio</title>
+	<meta name="robots" content="noindex, nofollow">
+	<link rel="stylesheet" href="/css/admin.css?v=7">
+</head>
+<body>
+<div style="max-width: 560px; margin: 10vh auto; padding: 0 20px;">
+	<div class="card">
+ <div class="card__body">
+ <p class="eyebrow-a">Error <%= status %></p>
+ <h1 style="font-family: var(--a-display); font-weight: 400; font-size: 1.8rem; margin: 0 0 10px;">Something went wrong</h1>
+ <p style="color: var(--a-muted);"><%= message %></p>
+ <div class="actions" style="margin-top: 18px;">
+ <a class="button button--primary" href="<%= adminBase %>">Back to dashboard</a>
+ <a class="button" href="/">View site</a>
+ </div>
+ </div>
+	</div>
+</div>
+</body>
+</html>

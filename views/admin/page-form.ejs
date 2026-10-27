@@ -1,0 +1,100 @@
+<%- include('partials/head') %>
+
+<% const isNew = !page.id; %>
+
+<form class="form" method="post" action="<%= isNew ? adminBase + '/pages' : adminBase + '/pages/' + page.id %>">
+	<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+	<% if (errors.length) { %>
+		<ul class="form-errors">
+			<% errors.forEach(function (error) { %><li><%= error %></li><% }); %>
+		</ul>
+	<% } %>
+
+	<div class="form-grid">
+		<div class="form-grid__main">
+			<div class="card">
+				<div class="card__body">
+					<div class="form">
+						<div class="field-row">
+							<p class="field">
+								<label for="title">Page title</label>
+								<input type="text" id="title" name="title" value="<%= page.title || '' %>" required>
+							</p>
+							<p class="field">
+								<label for="slug">URL slug</label>
+								<input type="text" id="slug" name="slug" value="<%= page.slug || '' %>" <%= typeof reserved !== 'undefined' && reserved ? 'readonly' : '' %>>
+								<% if (typeof reserved !== 'undefined' && reserved) { %><span class="hint">This slug is fixed by the site structure.</span><% } %>
+							</p>
+						</div>
+
+						<div class="card" style="box-shadow:none; margin-top:4px;">
+							<div class="card__head"><h2>Page header</h2></div>
+							<div class="card__body">
+								<div class="form">
+									<p class="field">
+										<label for="hero_eyebrow">Eyebrow</label>
+										<input type="text" id="hero_eyebrow" name="hero_eyebrow" value="<%= page.hero_eyebrow || '' %>" placeholder="Who we are">
+									</p>
+									<p class="field">
+										<label for="hero_title">Headline</label>
+										<input type="text" id="hero_title" name="hero_title" value="<%= page.hero_title || '' %>" placeholder="A clear, human headline">
+										<span class="hint">You can wrap a word in &lt;em&gt;…&lt;/em&gt; for italic emphasis.</span>
+									</p>
+									<p class="field">
+										<label for="hero_lede">Intro paragraph</label>
+										<textarea id="hero_lede" name="hero_lede" rows="3"><%= page.hero_lede || '' %></textarea>
+									</p>
+								</div>
+							</div>
+						</div>
+
+						<%- include('partials/editor', {
+							name: 'content',
+							value: page.content || '',
+							label: 'Page content',
+							hint: 'Shown beneath the page header.'
+						}) %>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-grid__aside">
+			<div class="card">
+				<div class="card__head"><h2>Settings</h2></div>
+				<div class="card__body">
+					<div class="form">
+						<p class="field">
+							<label for="template">Layout</label>
+							<select id="template" name="template">
+								<% templates.forEach(function (template) { %>
+									<option value="<%= template.value %>" <%= page.template === template.value ? 'selected' : '' %>><%= template.label %></option>
+								<% }); %>
+							</select>
+							<span class="hint">Layouts add sections such as the team grid or the donation details.</span>
+						</p>
+
+						<p class="field">
+							<label for="status">Status</label>
+							<select id="status" name="status">
+								<option value="published" <%= page.status === 'published' ? 'selected' : '' %>>Published</option>
+								<option value="draft" <%= page.status === 'draft' ? 'selected' : '' %>>Draft</option>
+							</select>
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-actions">
+				<button class="button button--primary" type="submit">Save page</button>
+				<% if (!isNew) { %>
+					<a class="button" href="/<%= page.slug %>" target="_blank" rel="noopener">View</a>
+				<% } %>
+				<a class="link-quiet" href="<%= adminBase %>/pages">Cancel</a>
+			</div>
+		</div>
+	</div>
+</form>
+
+<%- include('partials/foot') %>

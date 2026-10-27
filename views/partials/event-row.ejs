@@ -1,0 +1,15 @@
+<a class="event-row" href="/events/<%= event.slug %>">
+	<span class="event-date">
+		<span class="event-date__day"><%= h.formatDate(event.event_start, 'short').split(' ')[0] %></span>
+		<span class="event-date__month"><%= h.formatDate(event.event_start, 'short').split(' ')[1] %></span>
+	</span>
+	<span class="event-row__body">
+		<span class="event-row__meta">
+			<span><%- h.icon('clock', 12) %> <%= h.eventWhen(event.event_start, event.event_end) %></span>
+			<% if (event.event_location) { %><span><%- h.icon('pin', 12) %> <%= event.event_location %></span><% } %>
+		</span>
+		<span class="event-row__title"><%= event.title %></span>
+		<span class="event-row__excerpt"><%= h.truncate(event.excerpt || event.content, 120) %></span>
+	</span>
+	<span class="event-row__cta"><%- h.icon('arrow-up-right', 16) %></span>
+</a>

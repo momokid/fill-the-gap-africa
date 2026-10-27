@@ -1,0 +1,29 @@
+node_modules/
+.npm-cache/
+npm-debug.log*
+.env
+.env.local
+AGENTS.local.md
+
+# Runtime data (keep the folders, not their contents)
+data/*.db
+data/*.db.tmp
+public/uploads/*
+!public/uploads/.gitkeep
+!data/.gitkeep
+
+# Agent/tooling scratch files
+.agent-instructions.md
+.skill-fs.md
+.scan.js
+
+# Local artefacts
+shots/
+server.log
+server.err.log
+chrome-shot/
+cdp-profile/
+cs-*/
+nginx/
+.DS_Store
+Thumbs.db

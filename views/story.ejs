@@ -1,0 +1,79 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<%- include('partials/page-hero', {
+	title: post.category || 'Field notes',
+	eyebrow: post.category || 'Field notes',
+	titleHtml: post.title,
+	lede: post.excerpt,
+	metaList: [h.formatDate(post.published_at || post.created_at), h.readingTime(post.content) + ' min read', 'Fill The Gap Africa'],
+	crumb: { label: 'Stories', url: '/stories' }
+}) %>
+
+<article class="section single-story">
+	<div class="container">
+		<% if (post.cover) { %>
+			<figure class="single-story__media">
+				<img src="<%= post.cover %>" alt="<%= post.title %>" loading="eager" decoding="async">
+			</figure>
+		<% } %>
+
+		<div class="single-story__grid">
+			<div class="single-story__main">
+				<div class="prose">
+					<%- post.content %>
+				</div>
+
+				<div class="single-story__footer">
+					<div class="share">
+						<span class="share__label">Share</span>
+						<a class="share__link" href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(baseUrl + '/stories/' + post.slug) %>" target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook"><%- h.icon('facebook', 16) %></a>
+						<a class="share__link" href="https://twitter.com/intent/tweet?url=<%= encodeURIComponent(baseUrl + '/stories/' + post.slug) %>&text=<%= encodeURIComponent(post.title) %>" target="_blank" rel="noopener noreferrer" aria-label="Share on X"><%- h.icon('x', 16) %></a>
+						<a class="share__link" href="https://www.linkedin.com/sharing/share-offsite/?url=<%= encodeURIComponent(baseUrl + '/stories/' + post.slug) %>" target="_blank" rel="noopener noreferrer" aria-label="Share on LinkedIn"><%- h.icon('linkedin', 16) %></a>
+						<a class="share__link" href="mailto:?subject=<%= encodeURIComponent(post.title) %>&body=<%= encodeURIComponent(baseUrl + '/stories/' + post.slug) %>" aria-label="Share by email"><%- h.icon('mail', 16) %></a>
+					</div>
+				</div>
+			</div>
+
+			<aside class="single-story__aside">
+				<div class="aside-card">
+					<h2 class="aside-card__title">Written by</h2>
+					<div class="author">
+						<span class="author__avatar" aria-hidden="true">FG</span>
+						<div>
+							<span class="author__name"><%= site.site_name %></span>
+							<span class="author__role">Accra, Ghana</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="aside-card aside-card--accent">
+					<h2 class="aside-card__title">Support this work</h2>
+					<p>Every program on this page is funded by people who decided the gap was worth closing.</p>
+					<a class="btn btn--primary btn--block" href="/donate">Donate <%- h.icon('heart', 16) %></a>
+				</div>
+			</aside>
+		</div>
+	</div>
+</article>
+
+<% if (related.length) { %>
+	<section class="section related">
+		<div class="container">
+			<div class="section-head section-head--tight">
+				<div class="section-head__main">
+					<p class="kicker">Keep reading</p>
+					<h2 class="display">More from the <em>field</em>.</h2>
+				</div>
+			</div>
+			<div class="post-grid">
+				<% related.forEach(function (item) { %>
+					<%- include('partials/post-card', { post: item }) %>
+				<% }); %>
+			</div>
+		</div>
+	</section>
+<% } %>
+
+<%- include('partials/cta') %>
+<%- include('partials/footer') %>

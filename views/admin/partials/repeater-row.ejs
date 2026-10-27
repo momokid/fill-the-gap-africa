@@ -1,0 +1,33 @@
+<%
+/**
+ * One row of a repeatable block. The same partial renders saved rows and the
+ * blank <template> that the "Add" button clones.
+ */
+const value = function (name) {
+	const current = row && row[name];
+	return current === undefined || current === null ? '' : current;
+};
+%>
+<div class="repeater__row" data-row>
+	<div class="repeater__cells">
+		<% definition.columns.forEach(function (column) { %>
+			<label class="repeater__cell">
+				<span class="repeater__label"><%= column.label %></span>
+				<% if (column.type === 'textarea' || column.type === 'lines') { %>
+					<textarea name="<%= definition.key %>__<%= column.name %>" rows="<%= column.type === 'lines' ? 4 : 2 %>" placeholder="<%= column.placeholder || '' %>"><%= value(column.name) %></textarea>
+				<% } else if (column.type === 'select') { %>
+					<select name="<%= definition.key %>__<%= column.name %>">
+						<% (column.options || []).forEach(function (option) { %>
+							<option value="<%= option[0] %>" <%= String(value(column.name) || column.default) === option[0] ? 'selected' : '' %>><%= option[1] %></option>
+						<% }); %>
+					</select>
+				<% } else if (column.type === 'image') { %>
+					<input type="text" name="<%= definition.key %>__<%= column.name %>" value="<%= value(column.name) %>" placeholder="/uploads/photo.jpg" list="image-library">
+				<% } else { %>
+					<input type="text" name="<%= definition.key %>__<%= column.name %>" value="<%= value(column.name) %>" placeholder="<%= column.placeholder || '' %>">
+				<% } %>
+			</label>
+		<% }); %>
+	</div>
+	<button type="button" class="button button--ghost button--sm" data-remove>Remove</button>
+</div>

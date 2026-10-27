@@ -1,0 +1,79 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<%- include('partials/page-hero', {
+	title: page.title,
+	eyebrow: page.hero_eyebrow,
+	titleHtml: h.inline(page.hero_title || page.title),
+	lede: page.hero_lede
+}) %>
+
+<section class="section section--programs">
+	<div class="container">
+		<% if (page.content) { %>
+			<div class="prose programs-intro"><%- page.content %></div>
+		<% } %>
+
+		<div class="program-rows">
+			<% programs.forEach(function (program, index) { %>
+				<article class="program-row" id="<%= program.slug %>">
+					<div class="program-row__aside">
+						<span class="program-row__num"><%= String(index + 1).padStart(2, '0') %></span>
+						<span class="program-row__icon program-row__icon--<%= program.icon %>">
+							<%- h.icon(program.icon, 24) %>
+						</span>
+					</div>
+
+					<div class="program-row__main">
+						<h2 class="program-row__title">
+							<a href="/programs/<%= program.slug %>"><%= program.title %></a>
+						</h2>
+						<p class="program-row__text"><%= program.summary %></p>
+					</div>
+
+					<a class="program-row__cta" href="/programs/<%= program.slug %>">
+						<span>Explore program</span>
+						<%- h.icon('arrow-up-right', 18) %>
+					</a>
+				</article>
+			<% }); %>
+		</div>
+	</div>
+</section>
+
+<section class="section section--principles">
+	<div class="container">
+		<div class="section-head section-head--tight">
+			<div class="section-head__main">
+				<p class="kicker"><span>05</span> Across all programs</p>
+				<h2 class="display">One operating <em>standard</em>.</h2>
+			</div>
+		</div>
+		<ul class="principles">
+			<li class="principle">
+				<%- h.icon('users', 22) %>
+				<div>
+					<h3>A named community lead</h3>
+					<p>Every program has someone local who owns delivery and can stop it if it is not working.</p>
+				</div>
+			</li>
+			<li class="principle">
+				<%- h.icon('shield', 22) %>
+				<div>
+					<h3>A simple scorecard</h3>
+					<p>Three to five measures that a community member can explain without a report.</p>
+				</div>
+			</li>
+			<li class="principle">
+				<%- h.icon('globe', 22) %>
+				<div>
+					<h3>A public annual update</h3>
+					<p>What changed, what did not, and what we are changing next. Published, not internal.</p>
+				</div>
+			</li>
+		</ul>
+	</div>
+</section>
+
+<%- include('partials/cta') %>
+<%- include('partials/footer') %>

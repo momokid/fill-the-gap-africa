@@ -1,0 +1,45 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<%- include('partials/page-hero', {
+	title: 'Stories',
+	eyebrow: 'Field notes',
+	titleHtml: 'Stories',
+	lede: 'What we are learning, building and getting wrong, written down while it is still fresh.'
+}) %>
+
+<section class="section section--blog">
+	<div class="container">
+ <% if (posts.length) { %>
+ <div class="post-grid post-grid--blog">
+ <% posts.forEach(function (post) { %>
+ <%- include('partials/post-card', { post: post }) %>
+ <% }); %>
+ </div>
+
+ <% if (totalPages > 1) { %>
+ <nav class="pagination" aria-label="Stories pages">
+ <% if (page > 1) { %>
+ <a class="pagination__link" href="/stories?page=<%= page - 1 %>">Previous</a>
+ <% } %>
+ <% for (let p = 1; p <= totalPages; p += 1) { %>
+ <a class="pagination__link <%= p === page ? 'is-current' : '' %>" href="/stories?page=<%= p %>" <%= p === page ? 'aria-current="page"' : '' %>><%= p %></a>
+ <% } %>
+ <% if (page < totalPages) { %>
+ <a class="pagination__link" href="/stories?page=<%= page + 1 %>">Next</a>
+ <% } %>
+ </nav>
+ <% } %>
+ <% } else { %>
+ <div class="empty-state">
+ <%- h.icon('book', 32) %>
+ <h2>No stories yet</h2>
+ <p>Field notes will appear here as we publish them.</p>
+ <a class="btn btn--primary" href="/">Back to the homepage</a>
+ </div>
+ <% } %>
+	</div>
+</section>
+
+<%- include('partials/cta') %>
+<%- include('partials/footer') %>

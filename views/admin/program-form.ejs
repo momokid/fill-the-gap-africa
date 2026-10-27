@@ -1,0 +1,115 @@
+<%- include('partials/head') %>
+
+<% const isNew = !program.id; %>
+<% const iconOptions = [
+	{ value: 'book', label: 'Book, education' },
+	{ value: 'briefcase', label: 'Briefcase, enterprise' },
+	{ value: 'pulse', label: 'Pulse, health' },
+	{ value: 'leaf', label: 'Leaf, climate' },
+	{ value: 'users', label: 'People, community' },
+	{ value: 'globe', label: 'Globe, global' },
+	{ value: 'heart', label: 'Heart, care' },
+	{ value: 'shield', label: 'Shield, protection' },
+	{ value: 'spark', label: 'Spark, innovation' }
+]; %>
+
+<form class="form" method="post" action="<%= isNew ? adminBase + '/programs' : adminBase + '/programs/' + program.id %>" enctype="multipart/form-data">
+	<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+	<% if (errors.length) { %>
+ <ul class="form-errors">
+ <% errors.forEach(function (error) { %><li><%= error %></li><% }); %>
+ </ul>
+	<% } %>
+
+	<div class="form-grid">
+ <div class="form-grid__main">
+ <div class="card">
+ <div class="card__body">
+ <div class="form">
+ <p class="field">
+ <label for="title">Program name</label>
+ <input type="text" id="title" name="title" value="<%= program.title || '' %>" required>
+ </p>
+ <p class="field">
+ <label for="slug">URL slug</label>
+ <input type="text" id="slug" name="slug" value="<%= program.slug || '' %>" placeholder="generated from the name">
+ </p>
+ <p class="field">
+ <label for="summary">Card summary</label>
+ <textarea id="summary" name="summary" rows="3" maxlength="300"><%= program.summary || '' %></textarea>
+ <span class="hint">One sentence, shown on the program card and in search results.</span>
+ </p>
+
+ <%- include('partials/editor', {
+ name: 'content',
+ value: program.content || '',
+ label: 'Program page',
+ hint: 'Use headings such as “The challenge”, “What we do” and “How you can help”.'
+ }) %>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <div class="form-grid__aside">
+ <div class="card">
+ <div class="card__head"><h2>Settings</h2></div>
+ <div class="card__body">
+ <div class="form">
+ <p class="field">
+ <label for="icon">Icon</label>
+ <select id="icon" name="icon">
+ <% iconOptions.forEach(function (option) { %>
+ <option value="<%= option.value %>" <%= program.icon === option.value ? 'selected' : '' %>><%= option.label %></option>
+ <% }); %>
+ </select>
+ </p>
+ <div class="field-row">
+ <p class="field">
+ <label for="sort_order">Order</label>
+ <input type="number" id="sort_order" name="sort_order" value="<%= program.sort_order || 0 %>" min="0" step="1">
+ </p>
+ <p class="field">
+ <label for="status">Status</label>
+ <select id="status" name="status">
+ <option value="published" <%= program.status === 'published' ? 'selected' : '' %>>Published</option>
+ <option value="draft" <%= program.status === 'draft' ? 'selected' : '' %>>Draft</option>
+ </select>
+ </p>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <div class="card">
+ <div class="card__head"><h2>Cover image</h2></div>
+ <div class="card__body">
+ <div class="upload" data-upload>
+ <div class="upload__preview" data-preview>
+ <% if (program.cover) { %>
+ <img src="<%= program.cover %>" alt="">
+ <% } else { %>
+ <span class="upload__empty"><%- h.icon('image', 18) %> No image yet</span>
+ <% } %>
+ </div>
+ <input type="file" name="cover" accept="image/jpeg,image/png,image/webp,image/gif,image/avif">
+ <% if (program.cover) { %>
+ <label class="field--check" style="display:flex; margin-top:4px;">
+ <input type="checkbox" name="remove_cover" value="1">
+ <span>Remove current image</span>
+ </label>
+ <% } %>
+ </div>
+ </div>
+ </div>
+
+ <div class="form-actions">
+ <button class="button button--primary" type="submit">Save program</button>
+ <a class="link-quiet" href="<%= adminBase %>/programs">Cancel</a>
+ </div>
+ </div>
+	</div>
+</form>
+
+<%- include('partials/foot') %>

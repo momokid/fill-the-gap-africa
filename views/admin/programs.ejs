@@ -1,0 +1,45 @@
+<%- include('partials/head') %>
+
+<div class="page-head">
+	<div>
+		<h2>Programs</h2>
+		<p class="page-head__desc">The four program areas shown on the homepage, the footer and the programs page. Order controls how they appear.</p>
+	</div>
+	<div class="actions">
+		<a class="button button--primary" href="<%= adminBase %>/programs/new"><%- h.icon('plus', 15) %> New program</a>
+	</div>
+</div>
+
+<div class="card">
+	<div class="table-wrap">
+		<table class="table">
+			<thead>
+				<tr><th style="width:70px;">Order</th><th>Program</th><th>Status</th><th style="text-align:right;">Actions</th></tr>
+			</thead>
+			<tbody>
+				<% programs.forEach(function (program) { %>
+					<tr>
+						<td><span class="table__sub" style="margin:0;"><%= String(program.sort_order).padStart(2, '0') %></span></td>
+						<td>
+							<a class="table__title" href="<%= adminBase %>/programs/<%= program.id %>/edit"><%= program.title %></a>
+							<span class="table__sub"><%= program.summary %></span>
+						</td>
+						<td><span class="badge badge--<%= program.status %>"><%= program.status %></span></td>
+						<td>
+							<div class="table__actions">
+								<a class="button button--sm" href="/programs/<%= program.slug %>" target="_blank" rel="noopener">View</a>
+								<a class="button button--sm" href="<%= adminBase %>/programs/<%= program.id %>/edit">Edit</a>
+								<form method="post" action="<%= adminBase %>/programs/<%= program.id %>/delete" data-confirm="Delete the program “<%= program.title %>”?">
+									<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+									<button class="button button--sm button--danger" type="submit">Delete</button>
+								</form>
+							</div>
+						</td>
+					</tr>
+				<% }); %>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<%- include('partials/foot') %>

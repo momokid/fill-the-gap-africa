@@ -1,0 +1,77 @@
+<%- include('partials/head') %>
+
+<div class="page-head">
+	<div>
+		<h2><%= mode === 'new' ? 'Add user' : 'Edit user' %></h2>
+		<p class="page-head__desc"><%= mode === 'new' ? 'Create an account and choose what it can do.' : 'Update this account, change its role or set a new password.' %></p>
+	</div>
+	<div class="actions">
+		<a class="button" href="<%= adminBase %>/users">Back to users</a>
+	</div>
+</div>
+
+<% if (errors.length) { %>
+	<ul class="form-errors">
+		<% errors.forEach(function (error) { %><li><%= error %></li><% }); %>
+	</ul>
+<% } %>
+
+<form class="form" method="post" action="<%= mode === 'new' ? adminBase + '/users' : adminBase + '/users/' + user.id %>">
+	<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+	<div class="form-grid">
+		<div class="form-grid__main">
+			<div class="card">
+				<div class="card__head"><h2>Account details</h2></div>
+				<div class="card__body">
+					<div class="form">
+						<p class="field">
+							<label for="name">Full name</label>
+							<input type="text" id="name" name="name" value="<%= user.name %>" required>
+						</p>
+
+						<p class="field">
+							<label for="email">Email address</label>
+							<input type="email" id="email" name="email" value="<%= user.email %>" required>
+							<span class="hint">Used to sign in. Each account needs a unique address.</span>
+						</p>
+
+						<p class="field">
+							<label for="role">Role</label>
+							<select id="role" name="role">
+								<option value="admin" <%= user.role === 'admin' ? 'selected' : '' %>>Admin &middot; full access</option>
+								<option value="editor" <%= user.role === 'editor' ? 'selected' : '' %>>Editor &middot; content only</option>
+								<option value="reader" <%= user.role === 'reader' ? 'selected' : '' %>>Reader &middot; view dashboard and messages</option>
+							</select>
+						</p>
+
+						<p class="field">
+							<label for="password"><%= mode === 'new' ? 'Password' : 'New password (optional)' %></label>
+							<input type="password" id="password" name="password" autocomplete="new-password" <%= mode === 'new' ? 'required' : '' %>>
+							<span class="hint"><%= mode === 'new' ? 'At least 10 characters.' : 'Leave blank to keep the current password. At least 10 characters if set.' %></span>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-grid__aside">
+			<div class="card">
+				<div class="card__head"><h2>Permissions</h2></div>
+				<div class="card__body">
+					<div class="form">
+						<p><strong>Admin</strong><br><span class="hint">Everything, including design settings, partners and users.</span></p>
+						<p><strong>Editor</strong><br><span class="hint">Posts, events, pages, programs, team, media and messages.</span></p>
+						<p><strong>Reader</strong><br><span class="hint">Dashboard and messages, read only.</span></p>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-actions">
+				<button class="button button--primary" type="submit"><%= mode === 'new' ? 'Create user' : 'Save changes' %></button>
+			</div>
+		</div>
+	</div>
+</form>
+
+<%- include('partials/foot') %>

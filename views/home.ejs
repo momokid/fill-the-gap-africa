@@ -1,0 +1,255 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<section class="hero hero--photo">
+	<img class="hero__bg" src="<%= site.hero_image || '/img/photos/hero-bg.jpg' %>" alt="" aria-hidden="true" loading="eager" fetchpriority="high" decoding="async">
+	<div class="hero__overlay" aria-hidden="true"></div>
+
+	<div class="container hero__inner">
+ <div class="hero__content">
+ <p class="eyebrow"><%= site.hero_eyebrow %></p>
+
+ <h1 class="hero__title"><%- h.inline(site.hero_title) %></h1>
+
+ <p class="hero__lede"><%= site.hero_lede %></p>
+
+ <div class="hero__actions">
+ <a class="btn btn--accent btn--lg" href="<%= site.hero_cta_url %>">
+ <%= site.hero_cta_label %>
+ <%- h.icon('arrow-right', 18) %>
+ </a>
+ <a class="btn btn--outline-light btn--lg" href="<%= site.hero_cta2_url %>">
+ <%= site.hero_cta2_label %>
+ </a>
+ </div>
+
+ <div class="hero__partners">
+ <span class="hero__partners-label">Working with</span>
+ <ul class="hero__partners-list">
+ <% partners.slice(0, 3).forEach(function (partner) { %>
+ <li><%= partner.name %></li>
+ <% }); %>
+ </ul>
+ </div>
+ </div>
+
+ <div class="hero__stat hero__stat--float">
+ <span class="hero__stat-value"><%= site.hero_stat_value %></span>
+ <span class="hero__stat-label"><%= site.hero_stat_label %></span>
+ </div>
+	</div>
+</section>
+
+<% if (site.show_stats === '1') { %>
+<section class="stats-band" aria-label="Our impact in numbers">
+	<div class="container">
+ <div class="stats-band__head">
+ <span class="stats-band__label"><%= site.stats_label %></span>
+ <span class="stats-band__meta"><%= site.stats_meta %></span>
+ </div>
+ <ul class="stats">
+ <% stats.forEach(function (stat) { %>
+ <li class="stat">
+ <span class="stat__value"><%= stat.value %></span>
+ <span class="stat__label"><%= stat.label %></span>
+ </li>
+ <% }); %>
+ </ul>
+	</div>
+</section>
+<% } %>
+
+<% if (site.show_mission === '1') { %>
+<section class="section mission">
+	<div class="container mission__grid">
+ <div class="mission__head">
+ <p class="kicker"><span>01</span> <%= site.mission_kicker %></p>
+ <h2 class="display"><%- h.inline(site.mission_title) %></h2>
+ </div>
+ <div class="mission__body">
+ <p class="lede"><%= site.mission_lede %></p>
+ <p><%= site.mission_body %></p>
+
+ <a class="link-arrow" href="/about">Read our story <%- h.icon('arrow-right', 16) %></a>
+
+ <% var homeFacts = h.jsonList(site.home_facts); %>
+ <% if (homeFacts.length) { %>
+ <dl class="facts">
+ <% homeFacts.forEach(function (fact) { %>
+ <div class="fact">
+ <dt><%= fact.label %></dt>
+ <dd><%= fact.value %></dd>
+ </div>
+ <% }); %>
+ </dl>
+ <% } %>
+ </div>
+	</div>
+</section>
+<% } %>
+
+<% if (site.show_programs === '1') { %>
+<section class="section programs" id="programs">
+	<div class="container">
+ <div class="section-head">
+ <div class="section-head__main">
+ <p class="kicker"><span>02</span> <%= site.programs_kicker %></p>
+ <h2 class="display"><%- h.inline(site.programs_title) %></h2>
+ </div>
+ <div class="section-head__aside">
+ <p><%= site.programs_note %></p>
+ <a class="link-arrow" href="/programs">See all programs <%- h.icon('arrow-right', 16) %></a>
+ </div>
+ </div>
+
+ <div class="program-grid">
+ <% programs.forEach(function (program, index) { %>
+ <%- include('partials/program-card', { program: program, index: index }) %>
+ <% }); %>
+ </div>
+	</div>
+</section>
+<% } %>
+
+<% var approachSteps = h.jsonList(site.approach_steps); %>
+<% if (site.show_approach === '1' && approachSteps.length) { %>
+<section class="section approach">
+	<div class="container">
+ <div class="section-head section-head--tight">
+ <div class="section-head__main">
+ <p class="kicker"><span>03</span> <%= site.approach_kicker %></p>
+ <h2 class="display"><%- h.inline(site.approach_title) %></h2>
+ </div>
+ <div class="section-head__aside">
+ <p><%= site.approach_note %></p>
+ </div>
+ </div>
+
+ <ol class="steps">
+ <% approachSteps.forEach(function (step, index) { %>
+ <li class="step">
+ <span class="step__num"><%= String(index + 1).padStart(2, '0') %></span>
+ <h3 class="step__title"><%= step.title %></h3>
+ <p class="step__text"><%= step.text %></p>
+ </li>
+ <% }); %>
+ </ol>
+	</div>
+</section>
+<% } %>
+
+<% if (site.show_story === '1') { %>
+<section class="section story">
+	<div class="container story__grid">
+ <div class="story__visual">
+ <div class="story__meta">
+ <span class="story__place"><%= site.story_place %></span>
+ <span class="story__tag"><%= site.story_tag %></span>
+ </div>
+ <div class="story__stat">
+ <span class="story__stat-value"><%= site.hero_stat_value %></span>
+ <span class="story__stat-label"><%= site.hero_stat_label %></span>
+ </div>
+ </div>
+
+ <div class="story__content">
+ <p class="kicker"><span>04</span> <%= site.story_kicker %></p>
+ <h2 class="display"><%- h.inline(site.story_title) %></h2>
+ <p class="lede"><%= site.story_lede %></p>
+ <p><%= site.story_body %></p>
+
+ <% var storyPoints = h.jsonTexts(site.story_points); %>
+ <% if (storyPoints.length) { %>
+ <ul class="check-list">
+ <% storyPoints.forEach(function (point) { %>
+ <li><%= point %></li>
+ <% }); %>
+ </ul>
+ <% } %>
+
+ <% if (site.story_link_label) { %>
+ <a class="btn btn--ghost" href="<%= site.story_link_url || '/stories' %>"><%= site.story_link_label %> <%- h.icon('arrow-right', 16) %></a>
+ <% } %>
+ </div>
+	</div>
+</section>
+<% } %>
+
+<% if (site.show_partners === '1' && partners.length) { %>
+<section class="partners">
+	<div class="container">
+ <div class="partners__head">
+ <p class="kicker kicker--muted"><%= site.partners_title %></p>
+ <p class="partners__note"><%= site.partners_note %></p>
+ </div>
+ <ul class="partners__list">
+ <% partners.forEach(function (partner, index) { %>
+ <li class="partner">
+ <span class="partner__mark" aria-hidden="true"><%= h.initials(partner.name) %></span>
+ <span class="partner__name"><% if (partner.url) { %><a href="<%= partner.url %>" target="_blank" rel="noopener noreferrer"><%= partner.name %></a><% } else { %><%= partner.name %><% } %></span>
+ <span class="partner__meta">Partner <%= String(index + 1).padStart(2, '0') %></span>
+ </li>
+ <% }); %>
+ </ul>
+	</div>
+</section>
+<% } %>
+
+<% if (site.show_news === '1' && posts.length) { %>
+<section class="section news">
+	<div class="container">
+ <div class="section-head">
+ <div class="section-head__main">
+ <p class="kicker"><span>05</span> <%= site.news_kicker %></p>
+ <h2 class="display"><%- h.inline(site.news_title) %></h2>
+ </div>
+ <div class="section-head__aside">
+ <p><%= site.news_note %></p>
+ <a class="link-arrow" href="/stories">All stories <%- h.icon('arrow-right', 16) %></a>
+ </div>
+ </div>
+
+ <div class="post-grid">
+ <% posts.forEach(function (post) { %>
+ <%- include('partials/post-card', { post: post }) %>
+ <% }); %>
+ </div>
+	</div>
+</section>
+<% } %>
+
+<% if (site.show_events === '1' && events.length) { %>
+<section class="section" style="padding-top: 0;">
+	<div class="container">
+ <div class="section-head section-head--tight">
+ <div class="section-head__main">
+ <p class="kicker"><span>06</span> <%= site.events_kicker %></p>
+ <h2 class="display"><%- h.inline(site.events_title) %></h2>
+ </div>
+ <div class="section-head__aside">
+ <p><%= site.events_note %></p>
+ <a class="link-arrow" href="/events">All events <%- h.icon('arrow-right', 16) %></a>
+ </div>
+ </div>
+ <div class="event-teaser">
+ <% events.forEach(function (event) { %>
+ <a class="event-teaser__item" href="/events/<%= event.slug %>">
+ <span class="event-date event-date--dark">
+ <span class="event-date__day"><%= h.formatDate(event.event_start, 'short').split(' ')[0] %></span>
+ <span class="event-date__month"><%= h.formatDate(event.event_start, 'short').split(' ')[1] %></span>
+ </span>
+ <span class="event-teaser__body">
+ <h3><%= event.title %></h3>
+ <p><%= h.formatDate(event.event_start) %><% if (event.event_location) { %> · <%= event.event_location %><% } %></p>
+ </span>
+ </a>
+ <% }); %>
+ </div>
+	</div>
+</section>
+<% } %>
+
+<% if (site.show_cta === '1') { %>
+<%- include('partials/cta') %>
+<% } %>
+<%- include('partials/footer') %>

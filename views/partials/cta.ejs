@@ -1,0 +1,25 @@
+<section class="cta-band">
+	<div class="container">
+		<div class="cta-band__inner">
+			<div class="cta-band__pattern" aria-hidden="true"></div>
+			<div class="cta-band__content">
+				<p class="kicker kicker--light">Get involved</p>
+				<h2 class="cta-band__title"><%- h.inline(site.cta_title) %></h2>
+				<p class="cta-band__text"><%= site.cta_body %></p>
+			</div>
+			<div class="cta-band__aside">
+				<a class="btn btn--accent btn--lg" href="<%= site.cta_primary_url %>">
+					<%= site.cta_primary_label %>
+					<%- h.icon('heart', 18) %>
+				</a>
+				<a class="btn btn--outline-light btn--lg" href="<%= site.cta_secondary_url %>">
+					<%= site.cta_secondary_label %>
+				</a>
+				<p class="cta-band__note">
+					Prefer to talk first? Write to
+					<a href="mailto:<%= site.contact_email %>"><%= site.contact_email %></a>.
+				</p>
+			</div>
+		</div>
+	</div>
+</section>

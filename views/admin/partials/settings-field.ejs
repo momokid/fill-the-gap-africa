@@ -1,0 +1,38 @@
+<%
+/**
+ * One settings field. Expects `field` (from lib/settings-schema.js) and
+ * `settings` (the current values) in scope.
+ */
+const fieldType = field.type || 'text';
+%>
+<% if (fieldType === 'note') { %>
+	<p class="field field--note">
+		<span class="hint"><%= field.hint %></span>
+	</p>
+<% } else { %>
+	<p class="field">
+		<label for="<%= field.key %>"><%= field.label %></label>
+		<% if (fieldType === 'textarea') { %>
+			<textarea id="<%= field.key %>" name="<%= field.key %>" rows="<%= field.key === 'hero_lede' || field.key === 'contact_address' ? 4 : 3 %>"><%= settings[field.key] %></textarea>
+		<% } else if (fieldType === 'select') { %>
+			<select id="<%= field.key %>" name="<%= field.key %>">
+				<% field.options.forEach(function (option) { %>
+					<option value="<%= option[0] %>" <%= settings[field.key] === option[0] ? 'selected' : '' %>><%= option[1] %></option>
+				<% }); %>
+			</select>
+		<% } else if (fieldType === 'color') { %>
+			<input type="color" id="<%= field.key %>" name="<%= field.key %>" value="<%= settings[field.key] || '#000000' %>">
+			<span class="hint" style="text-transform: uppercase;"><%= settings[field.key] %></span>
+		<% } else if (fieldType === 'number') { %>
+			<input type="number" id="<%= field.key %>" name="<%= field.key %>" value="<%= settings[field.key] %>"<% if (typeof field.min !== 'undefined') { %> min="<%= field.min %>"<% } %><% if (typeof field.max !== 'undefined') { %> max="<%= field.max %>"<% } %>>
+		<% } else if (fieldType === 'checkbox') { %>
+			<label class="field--check" style="display:flex;">
+				<input type="checkbox" id="<%= field.key %>" name="<%= field.key %>" value="1" <%= settings[field.key] === '1' ? 'checked' : '' %>>
+				<span>Show this section</span>
+			</label>
+		<% } else { %>
+			<input type="text" id="<%= field.key %>" name="<%= field.key %>" value="<%= settings[field.key] %>">
+		<% } %>
+		<% if (field.hint && fieldType !== 'note') { %><span class="hint"><%= field.hint %></span><% } %>
+	</p>
+<% } %>

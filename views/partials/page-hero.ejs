@@ -1,0 +1,29 @@
+<header class="page-hero">
+	<div class="container">
+		<nav class="breadcrumbs" aria-label="Breadcrumb">
+			<ol>
+				<li><a href="/">Home</a></li>
+				<% if (typeof crumb !== 'undefined' && crumb) { %>
+					<li><a href="<%= crumb.url %>"><%= crumb.label %></a></li>
+				<% } %>
+				<li><span aria-current="page"><%= title %></span></li>
+			</ol>
+		</nav>
+
+		<% if (typeof eyebrow !== 'undefined' && eyebrow) { %>
+			<p class="eyebrow"><%= eyebrow %></p>
+		<% } %>
+
+		<h1 class="page-hero__title"><%- typeof titleHtml !== 'undefined' && titleHtml ? titleHtml : title %></h1>
+
+		<% if (typeof lede !== 'undefined' && lede) { %>
+			<p class="page-hero__lede"><%= lede %></p>
+		<% } %>
+
+		<% if (typeof metaList !== 'undefined' && metaList && metaList.length) { %>
+			<ul class="page-hero__meta">
+				<% metaList.forEach(function (item) { %><li><%= item %></li><% }); %>
+			</ul>
+		<% } %>
+	</div>
+</header>

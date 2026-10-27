@@ -1,0 +1,103 @@
+<%- include('partials/head') %>
+
+<div class="stat-grid">
+	<a class="stat-card" href="<%= adminBase %>/posts">
+ <span class="stat-card__label">Published posts</span>
+ <span class="stat-card__value"><%= stats.posts %></span>
+ <span class="stat-card__note"><%= stats.drafts %> draft<%= stats.drafts === 1 ? '' : 's' %> waiting</span>
+	</a>
+	<a class="stat-card" href="<%= adminBase %>/posts?type=event">
+ <span class="stat-card__label">Events</span>
+ <span class="stat-card__value"><%= stats.events %></span>
+ <span class="stat-card__note">Upcoming and past</span>
+	</a>
+	<a class="stat-card" href="<%= adminBase %>/messages">
+ <span class="stat-card__label">Unread messages</span>
+ <span class="stat-card__value"><%= stats.messages %></span>
+ <span class="stat-card__note">From the contact form</span>
+	</a>
+	<a class="stat-card" href="<%= adminBase %>/programs">
+ <span class="stat-card__label">Programs</span>
+ <span class="stat-card__value"><%= stats.programs %></span>
+ <span class="stat-card__note"><%= stats.pages %> pages published</span>
+	</a>
+</div>
+
+<div class="dash-grid">
+	<div>
+ <div class="card">
+ <div class="card__head">
+ <h2>Recently updated</h2>
+ <a class="link-quiet" href="<%= adminBase %>/posts">All content</a>
+ </div>
+ <div class="table-wrap">
+ <table class="table">
+ <thead>
+ <tr><th>Title</th><th>Type</th><th>Status</th><th></th></tr>
+ </thead>
+ <tbody>
+ <% if (recentPosts.length) { %>
+ <% recentPosts.forEach(function (post) { %>
+ <tr>
+ <td>
+ <% if (canEdit) { %><a class="table__title" href="<%= adminBase %>/posts/<%= post.id %>/edit"><%= post.title %></a><% } else { %><span class="table__title"><%= post.title %></span><% } %>
+ <span class="table__sub"><%= h.formatDate(post.updated_at, 'short') %></span>
+ </td>
+ <td><span class="badge badge--type"><%= post.type === 'event' ? 'Event' : 'Post' %></span></td>
+ <td><span class="badge badge--<%= post.status %>"><%= post.status %></span></td>
+ <td>
+ <div class="table__actions">
+ <% if (canEdit) { %><a class="button button--sm" href="<%= adminBase %>/posts/<%= post.id %>/edit">Edit</a><% } %>
+ </div>
+ </td>
+ </tr>
+ <% }); %>
+ <% } else { %>
+ <tr><td colspan="4" class="empty-a">Nothing published yet.</td></tr>
+ <% } %>
+ </tbody>
+ </table>
+ </div>
+ </div>
+	</div>
+
+	<div>
+ <div class="card" style="margin-bottom: 16px;">
+ <div class="card__head"><h2>Quick actions</h2></div>
+ <div class="card__body">
+ <div class="quick-actions">
+ <% if (canEdit) { %><a class="quick-action" href="<%= adminBase %>/posts/new">New post <%- h.icon('plus', 14) %></a><% } %>
+ <% if (canEdit) { %><a class="quick-action" href="<%= adminBase %>/posts/new?type=event">New event <%- h.icon('plus', 14) %></a><% } %>
+ <a class="quick-action" href="<%= adminBase %>/programs/new">New program <%- h.icon('plus', 14) %></a>
+ <a class="quick-action" href="<%= adminBase %>/team/new">New team member <%- h.icon('plus', 14) %></a>
+ </div>
+ </div>
+ </div>
+
+ <div class="card">
+ <div class="card__head">
+ <h2>Latest messages</h2>
+ <a class="link-quiet" href="<%= adminBase %>/messages">Inbox</a>
+ </div>
+ <ul class="list-simple">
+ <% if (recentMessages.length) { %>
+ <% recentMessages.forEach(function (message) { %>
+ <li>
+ <div class="list-simple__main">
+ <a class="list-simple__title" href="<%= adminBase %>/messages?id=<%= message.id %>">
+ <% if (!message.is_read) { %><span class="message-list__dot"></span><% } %><%= message.name %>, <%= message.topic %>
+ </a>
+ <span class="list-simple__meta"><%= h.truncate(message.message, 58) %></span>
+ </div>
+ <span class="list-simple__time"><%= h.formatDate(message.created_at, 'short') %></span>
+ </li>
+ <% }); %>
+ <% } else { %>
+ <li class="empty-a" style="display:block;">No messages yet.</li>
+ <% } %>
+ </ul>
+ </div>
+	</div>
+</div>
+
+<%- include('partials/foot') %>

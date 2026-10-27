@@ -1,0 +1,66 @@
+<%- include('partials/head') %>
+
+<div class="page-head">
+	<div>
+		<h2>Users &amp; roles</h2>
+		<p class="page-head__desc">Administrators manage everything, including users and settings. Editors write, publish and organise content. Readers can sign in and view the dashboard and messages.</p>
+	</div>
+	<div class="actions">
+		<a class="button button--primary" href="<%= adminBase %>/users/new"><%- h.icon('plus', 15) %> Add user</a>
+	</div>
+</div>
+
+<div class="card">
+	<div class="table-wrap">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Role</th>
+					<th>Joined</th>
+					<th style="text-align:right;">Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% users.forEach(function (user) { %>
+					<tr>
+						<td>
+							<a class="table__title" href="<%= adminBase %>/users/<%= user.id %>/edit"><%= user.name %><% if (user.id === currentUser.id) { %> (you)<% } %></a>
+							<span class="table__sub"><%= user.email %></span>
+						</td>
+						<td>
+							<span class="badge badge--type"><%= user.role %></span>
+						</td>
+						<td>
+							<span class="table__sub" style="margin:0;"><%= h.formatDate(user.created_at, 'short') %></span>
+						</td>
+						<td>
+							<div class="table__actions">
+								<a class="button button--sm" href="<%= adminBase %>/users/<%= user.id %>/edit">Edit</a>
+								<% if (user.id !== currentUser.id) { %>
+									<form method="post" action="<%= adminBase %>/users/<%= user.id %>/delete" data-confirm="Remove <%= user.name %>? They will lose access immediately.">
+										<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+										<button class="button button--sm button--danger" type="submit">Delete</button>
+									</form>
+								<% } %>
+							</div>
+						</td>
+					</tr>
+				<% }); %>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="card" style="margin-top: 18px;">
+	<div class="card__head"><h2>What each role can do</h2></div>
+	<div class="card__body">
+		<div class="form">
+			<p><strong>Admin</strong> &middot; everything, including settings, design, partners and user management.</p>
+			<p><strong>Editor</strong> &middot; posts, events, pages, programs, team, media and messages. No settings or users.</p>
+			<p><strong>Reader</strong> &middot; signs in, sees the dashboard and reads messages. No editing.</p>
+		</div>
+	</div>
+</div>
+
+<%- include('partials/foot') %>

@@ -1,0 +1,163 @@
+<%- include('partials/head') %>
+
+<div class="page-head">
+	<div>
+		<p class="page-head__desc">These values are used across the site. Changes appear immediately after saving.</p>
+	</div>
+</div>
+
+<div class="tabs">
+	<% tabs.forEach(function (item) { %>
+		<a class="<%= tab === item.id ? 'is-active' : '' %>" href="<%= adminBase %>/settings?tab=<%= item.id %>"><%= item.label %></a>
+	<% }); %>
+</div>
+
+<form class="form" method="post" action="<%= adminBase %>/settings" enctype="multipart/form-data">
+	<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+	<input type="hidden" name="tab" value="<%= tab %>">
+
+	<datalist id="image-library">
+		<% imageLibrary.forEach(function (path) { %>
+			<option value="<%= path %>"></option>
+		<% }); %>
+	</datalist>
+
+	<div class="form-grid">
+		<div class="form-grid__main">
+			<% tabSchema.sections.forEach(function (section) { %>
+				<div class="card">
+					<div class="card__head"><h2><%= section.title %></h2></div>
+					<div class="card__body">
+						<div class="form">
+							<% section.fields.forEach(function (field) { %>
+								<%- include('partials/settings-field', { field: field, settings: settings }) %>
+							<% }); %>
+						</div>
+					</div>
+				</div>
+			<% }); %>
+
+			<% repeaters.forEach(function (item) { %>
+				<div class="card">
+					<div class="card__head"><h2><%= item.definition.title %></h2></div>
+					<div class="card__body">
+						<div class="repeater" data-repeater>
+							<input type="hidden" name="<%= item.definition.key %>__present" value="1">
+							<div class="repeater__rows" data-rows>
+								<% (item.rows.length ? item.rows : [{}]).forEach(function (row) { %>
+									<%- include('partials/repeater-row', { definition: item.definition, row: row }) %>
+								<% }); %>
+							</div>
+							<div class="repeater__foot">
+								<button type="button" class="button button--ghost button--sm" data-add><%= item.definition.addLabel %></button>
+								<% if (item.definition.hint) { %><span class="hint"><%= item.definition.hint %></span><% } %>
+							</div>
+							<template data-template>
+								<%- include('partials/repeater-row', { definition: item.definition, row: {} }) %>
+							</template>
+						</div>
+					</div>
+				</div>
+			<% }); %>
+
+			<% if (tab === 'general') { %>
+				<div class="card">
+					<div class="card__head"><h2>Navigation menu</h2></div>
+					<div class="card__body">
+						<div class="field" data-menu>
+							<div data-menu-rows>
+								<% (menuRows.length ? menuRows : [{}]).forEach(function (item) { %>
+									<div class="partner-row" style="display:grid; grid-template-columns: 1fr 1fr auto; gap: 8px; margin-bottom: 8px;">
+										<input type="text" name="menu_label" value="<%= item.label || '' %>" placeholder="Label">
+										<input type="text" name="menu_url" value="<%= item.url || '' %>" placeholder="/about">
+										<button type="button" class="button button--ghost button--sm" data-remove-menu>Remove</button>
+									</div>
+								<% }); %>
+							</div>
+							<button type="button" class="button button--ghost button--sm" data-add-menu>Add link</button>
+							<span class="hint">Used in the header and footer Explore column. Use /about or a full https URL.</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card__head"><h2>Partners &amp; supporters</h2></div>
+					<div class="card__body">
+						<div class="field" data-partners>
+							<div data-partner-rows>
+								<% (partnerRows.length ? partnerRows : [{}]).forEach(function (partner) { %>
+									<div class="partner-row" style="display:grid; grid-template-columns: 1fr 1fr auto; gap: 8px; margin-bottom: 8px;">
+										<input type="text" name="partner_name" value="<%= partner.name || '' %>" placeholder="Partner name">
+										<input type="text" name="partner_url" value="<%= partner.url || '' %>" placeholder="https://example.org (optional)">
+										<button type="button" class="button button--ghost button--sm" data-remove-partner>Remove</button>
+									</div>
+								<% }); %>
+							</div>
+							<button type="button" class="button button--ghost button--sm" data-add-partner>Add partner</button>
+							<span class="hint">Shown on the homepage and About page. Links are optional.</span>
+						</div>
+					</div>
+				</div>
+			<% } %>
+		</div>
+
+		<div class="form-grid__aside">
+			<% if (tab === 'general') { %>
+				<div class="card">
+					<div class="card__head"><h2>Logo</h2></div>
+					<div class="card__body">
+						<div class="upload" data-upload>
+							<div class="upload__preview" data-preview style="aspect-ratio: 4 / 3;">
+								<% if (settings.logo) { %>
+									<img src="<%= settings.logo %>" alt="Logo">
+								<% } else { %>
+									<span class="upload__empty"><%- h.icon('image', 18) %> Default brand mark</span>
+								<% } %>
+							</div>
+							<input type="file" name="logo_file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif">
+							<span class="hint">Upload the official logo (PNG or SVG-converted PNG, transparent background works best).</span>
+							<% if (settings.logo) { %>
+								<label class="field--check" style="display:flex; margin-top:4px;">
+									<input type="checkbox" name="remove_logo" value="1">
+									<span>Remove logo</span>
+								</label>
+							<% } %>
+						</div>
+					</div>
+				</div>
+			<% } %>
+
+			<% if (tab === 'homepage') { %>
+				<div class="card">
+					<div class="card__head"><h2>Hero image</h2></div>
+					<div class="card__body">
+						<div class="upload" data-upload>
+							<div class="upload__preview" data-preview>
+								<% if (settings.hero_image) { %>
+									<img src="<%= settings.hero_image %>" alt="">
+								<% } else { %>
+									<span class="upload__empty"><%- h.icon('image', 18) %> Illustration instead</span>
+								<% } %>
+							</div>
+							<input type="file" name="hero_image_file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif">
+							<span class="hint">Full-width background for the homepage hero. A landscape photo (at least 1600px wide) works best.</span>
+							<% if (settings.hero_image) { %>
+								<label class="field--check" style="display:flex; margin-top:4px;">
+									<input type="checkbox" name="remove_hero_image" value="1">
+									<span>Remove main image</span>
+								</label>
+							<% } %>
+						</div>
+					</div>
+				</div>
+			<% } %>
+
+			<div class="form-actions">
+				<button class="button button--primary" type="submit">Save settings</button>
+			</div>
+			<p class="hint" style="margin:0;">Signed in as <%= currentUser.email %>.</p>
+		</div>
+	</div>
+</form>
+
+<%- include('partials/foot') %>

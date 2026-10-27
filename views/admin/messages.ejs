@@ -1,0 +1,71 @@
+<%- include('partials/head') %>
+
+<div class="page-head">
+	<div>
+ <h2>Messages</h2>
+ <p class="page-head__desc">Every contact-form enquiry is stored here, even if email delivery fails.</p>
+	</div>
+</div>
+
+<div class="messages-grid">
+	<div class="card">
+ <div class="card__head">
+ <h2>Inbox</h2>
+ <span class="badge"><%= messages.length %> total</span>
+ </div>
+ <ul class="message-list">
+ <% if (messages.length) { %>
+ <% messages.forEach(function (message) { %>
+ <li>
+ <a class="<%= selected && selected.id === message.id ? 'is-active' : '' %>" href="<%= adminBase %>/messages?id=<%= message.id %>">
+ <span class="message-list__top">
+ <span class="message-list__name">
+ <% if (!message.is_read) { %><span class="message-list__dot"></span><% } %><%= message.name %>
+ </span>
+ <span class="message-list__time"><%= h.formatDate(message.created_at, 'short') %></span>
+ </span>
+ <span class="message-list__subject"><%= message.topic %>, <%= h.truncate(message.message, 46) %></span>
+ </a>
+ </li>
+ <% }); %>
+ <% } else { %>
+ <li class="empty-a" style="display:block;">The inbox is empty.</li>
+ <% } %>
+ </ul>
+	</div>
+
+	<div class="card">
+ <% if (selected) { %>
+ <div class="card__body">
+ <div class="message-detail__head">
+ <div>
+ <h2 class="message-detail__subject"><%= selected.topic %></h2>
+ <p class="message-detail__meta">
+ <%= selected.name %> ·
+ <a href="mailto:<%= selected.email %>"><%= selected.email %></a>
+ <% if (selected.phone) { %> · <%= selected.phone %><% } %>
+ <br>
+ <%= h.formatDate(selected.created_at, 'short') %> at <%= h.formatTime(selected.created_at) %>
+ </p>
+ </div>
+ <div class="actions">
+ <a class="button button--primary" href="mailto:<%= selected.email %>?subject=<%= encodeURIComponent('Re: ' + selected.topic) %>">Reply by email</a>
+ <form method="post" action="<%= adminBase %>/messages/<%= selected.id %>/delete" data-confirm="Delete this message?">
+ <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+ <button class="button button--danger" type="submit">Delete</button>
+ </form>
+ </div>
+ </div>
+ <div class="message-detail__body"><%= selected.message %></div>
+ </div>
+ <% } else { %>
+ <div class="empty-a">
+ <%- h.icon('inbox', 26) %>
+ <h3 style="margin-top: 10px;">Select a message</h3>
+ <p>Choose an enquiry from the list to read it.</p>
+ </div>
+ <% } %>
+	</div>
+</div>
+
+<%- include('partials/foot') %>

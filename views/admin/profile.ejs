@@ -1,0 +1,64 @@
+<%- include('partials/head') %>
+
+<% if (errors.length) { %>
+	<ul class="form-errors" style="margin-bottom: 18px;">
+		<% errors.forEach(function (error) { %><li><%= error %></li><% }); %>
+	</ul>
+<% } %>
+
+<div class="dash-grid">
+	<div class="card">
+		<div class="card__head"><h2>Your details</h2></div>
+		<div class="card__body">
+			<form class="form" method="post" action="<%= adminBase %>/profile">
+				<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+				<p class="field">
+					<label for="name">Full name</label>
+					<input type="text" id="name" name="name" value="<%= currentUser.name %>" required>
+				</p>
+				<p class="field">
+					<label for="email">Email address</label>
+					<input type="email" id="email" name="email" value="<%= currentUser.email %>" required>
+					<span class="hint">This is the address you sign in with.</span>
+				</p>
+				<div class="form-actions">
+					<button class="button button--primary" type="submit">Update details</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card__head"><h2>Change password</h2></div>
+		<div class="card__body">
+			<form class="form" method="post" action="<%= adminBase %>/profile/password">
+				<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+				<p class="field">
+					<label for="current_password">Current password</label>
+					<input type="password" id="current_password" name="current_password" autocomplete="current-password" required>
+				</p>
+				<p class="field">
+					<label for="new_password">New password</label>
+					<input type="password" id="new_password" name="new_password" autocomplete="new-password" minlength="10" required>
+					<span class="hint">At least 10 characters. Use a password manager.</span>
+				</p>
+				<p class="field">
+					<label for="confirm_password">Confirm new password</label>
+					<input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password" minlength="10" required>
+				</p>
+				<div class="form-actions">
+					<button class="button button--primary" type="submit">Change password</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="card" style="margin-top: 18px;">
+	<div class="card__body">
+		<p class="eyebrow-a">Security</p>
+		<p style="margin:0; color: var(--a-muted);">Sessions expire after 12 hours. Signing in from a new device does not sign you out elsewhere. If you think your account is compromised, change the password and update <code>SESSION_SECRET</code> in your environment file.</p>
+	</div>
+</div>
+
+<%- include('partials/foot') %>

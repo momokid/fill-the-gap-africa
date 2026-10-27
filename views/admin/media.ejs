@@ -1,0 +1,51 @@
+<%- include('partials/head') %>
+
+<div class="page-head">
+	<div>
+		<h2>Media</h2>
+		<p class="page-head__desc">Images uploaded here can be used as covers, team photos and program artwork. Files are stored in <code>/public/uploads</code>.</p>
+	</div>
+</div>
+
+<div class="card" style="margin-bottom: 18px;">
+	<div class="card__body">
+		<form class="actions" method="post" action="<%= adminBase %>/media" enctype="multipart/form-data">
+			<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+			<input type="file" name="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" required>
+			<button class="button button--primary" type="submit"><%- h.icon('image', 15) %> Upload image</button>
+			<span class="hint">JPG, PNG, WebP, GIF or AVIF. Up to 8 MB.</span>
+		</form>
+	</div>
+</div>
+
+<% if (items.length) { %>
+	<div class="media-grid">
+		<% items.forEach(function (item) { %>
+			<article class="media-card">
+				<div class="media-card__image">
+					<img src="/uploads/<%= item.filename %>" alt="<%= item.original_name %>" loading="lazy">
+				</div>
+				<div class="media-card__body">
+					<span class="media-card__name" title="<%= item.original_name %>"><%= item.original_name %></span>
+					<span class="media-card__meta"><%= (item.size / 1024).toFixed(0) %> KB · <%= h.formatDate(item.created_at, 'short') %></span>
+					<div class="media-card__actions">
+						<button class="button button--sm" type="button" data-copy-url="/uploads/<%= item.filename %>">Copy URL</button>
+						<form method="post" action="<%= adminBase %>/media/<%= item.id %>/delete" data-confirm="Delete this image? It will be removed from any page that uses it.">
+							<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+							<button class="button button--sm button--danger" type="submit">Delete</button>
+						</form>
+					</div>
+				</div>
+			</article>
+		<% }); %>
+	</div>
+<% } else { %>
+	<div class="card">
+		<div class="empty-a">
+			<h3>No images yet</h3>
+			<p>Upload a photo to use on the site.</p>
+		</div>
+	</div>
+<% } %>
+
+<%- include('partials/foot') %>

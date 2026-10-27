@@ -1,0 +1,96 @@
+<%- include('partials/head') %>
+
+<% const isNew = !member.id; %>
+
+<form class="form" method="post" action="<%= isNew ? adminBase + '/team' : adminBase + '/team/' + member.id %>" enctype="multipart/form-data">
+	<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+	<% if (errors.length) { %>
+		<ul class="form-errors">
+			<% errors.forEach(function (error) { %><li><%= error %></li><% }); %>
+		</ul>
+	<% } %>
+
+	<div class="form-grid">
+		<div class="form-grid__main">
+			<div class="card">
+				<div class="card__body">
+					<div class="form">
+						<div class="field-row">
+							<p class="field">
+								<label for="name">Full name</label>
+								<input type="text" id="name" name="name" value="<%= member.name || '' %>" required>
+							</p>
+							<p class="field">
+								<label for="initials">Initials</label>
+								<input type="text" id="initials" name="initials" value="<%= member.initials || '' %>" maxlength="3" placeholder="Auto">
+								<span class="hint">Shown on the card when there is no photo.</span>
+							</p>
+						</div>
+						<p class="field">
+							<label for="role">Role</label>
+							<input type="text" id="role" name="role" value="<%= member.role || '' %>" placeholder="Programs Lead, Education & Girls">
+						</p>
+						<p class="field">
+							<label for="bio">Short biography</label>
+							<textarea id="bio" name="bio" rows="5" maxlength="500"><%= member.bio || '' %></textarea>
+							<span class="hint">Two or three sentences. This appears on the About page.</span>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-grid__aside">
+			<div class="card">
+				<div class="card__head"><h2>Settings</h2></div>
+				<div class="card__body">
+					<div class="form">
+						<div class="field-row">
+							<p class="field">
+								<label for="sort_order">Order</label>
+								<input type="number" id="sort_order" name="sort_order" value="<%= member.sort_order || 0 %>" min="0" step="1">
+							</p>
+							<p class="field">
+								<label for="status">Status</label>
+								<select id="status" name="status">
+									<option value="published" <%= member.status === 'published' ? 'selected' : '' %>>Published</option>
+									<option value="draft" <%= member.status === 'draft' ? 'selected' : '' %>>Draft</option>
+								</select>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="card">
+				<div class="card__head"><h2>Photo</h2></div>
+				<div class="card__body">
+					<div class="upload" data-upload>
+						<div class="upload__preview" data-preview>
+							<% if (member.photo) { %>
+								<img src="<%= member.photo %>" alt="">
+							<% } else { %>
+								<span class="upload__empty"><%- h.icon('image', 18) %> Initials instead</span>
+							<% } %>
+						</div>
+						<input type="file" name="photo" accept="image/jpeg,image/png,image/webp,image/gif,image/avif">
+						<% if (member.photo) { %>
+							<label class="field--check" style="display:flex; margin-top:4px;">
+								<input type="checkbox" name="remove_photo" value="1">
+								<span>Remove current photo</span>
+							</label>
+						<% } %>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-actions">
+				<button class="button button--primary" type="submit">Save person</button>
+				<a class="link-quiet" href="<%= adminBase %>/team">Cancel</a>
+			</div>
+		</div>
+	</div>
+</form>
+
+<%- include('partials/foot') %>

@@ -1,0 +1,77 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<%- include('partials/page-hero', {
+	title: 'Search',
+	eyebrow: 'Search',
+	titleHtml: query ? 'Results for “' + h.cleanText(query, 80) + '”' : 'Search the site',
+	lede: query ? '' : 'Find a story, a program or a page.'
+}) %>
+
+<section class="section section--search">
+	<div class="container">
+		<div class="search-panel">
+			<form class="search-form" role="search" method="get" action="/search">
+				<label class="screen-reader-text" for="q">Search this site</label>
+				<input class="search-form__field" type="search" id="q" name="q" value="<%= query %>" placeholder="Search stories, programs, pages…">
+				<button class="search-form__submit" type="submit">
+					<%- h.icon('search', 18) %>
+					<span>Search</span>
+				</button>
+			</form>
+		</div>
+
+		<% const total = results.posts.length + results.programs.length + results.pages.length; %>
+
+		<% if (!query) { %>
+			<p class="lede">Type a word above to search the site.</p>
+		<% } else if (total === 0) { %>
+			<div class="empty-state">
+				<%- h.icon('search', 32) %>
+				<h2>No matches</h2>
+				<p>Try a shorter phrase, or browse our programs instead.</p>
+				<a class="btn btn--primary" href="/programs">See our programs</a>
+			</div>
+		<% } else { %>
+			<p style="color: var(--muted); margin-bottom: 28px;"><%= total %> result<%= total === 1 ? '' : 's' %></p>
+
+			<% if (results.posts.length) { %>
+				<div class="search-group">
+					<h2 class="search-group__title">Stories &amp; events</h2>
+					<% results.posts.forEach(function (item) { %>
+						<a class="search-result" href="<%= item.type === 'event' ? '/events/' : '/stories/' %><%= item.slug %>">
+							<span class="search-result__title"><%= item.title %></span>
+							<span class="search-result__meta"><%= item.type === 'event' ? 'Event' : 'Story' %></span>
+						</a>
+					<% }); %>
+				</div>
+			<% } %>
+
+			<% if (results.programs.length) { %>
+				<div class="search-group">
+					<h2 class="search-group__title">Programs</h2>
+					<% results.programs.forEach(function (item) { %>
+						<a class="search-result" href="/programs/<%= item.slug %>">
+							<span class="search-result__title"><%= item.title %></span>
+							<span class="search-result__meta">Program</span>
+						</a>
+					<% }); %>
+				</div>
+			<% } %>
+
+			<% if (results.pages.length) { %>
+				<div class="search-group">
+					<h2 class="search-group__title">Pages</h2>
+					<% results.pages.forEach(function (item) { %>
+						<a class="search-result" href="/<%= item.slug %>">
+							<span class="search-result__title"><%= item.title %></span>
+							<span class="search-result__meta">Page</span>
+						</a>
+					<% }); %>
+				</div>
+			<% } %>
+		<% } %>
+	</div>
+</section>
+
+<%- include('partials/footer') %>

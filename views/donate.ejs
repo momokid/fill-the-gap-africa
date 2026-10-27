@@ -1,0 +1,174 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<%- include('partials/page-hero', {
+	title: page.title,
+	eyebrow: page.hero_eyebrow,
+	titleHtml: h.inline(page.hero_title || page.title),
+	lede: page.hero_lede
+}) %>
+
+<section class="section give">
+	<div class="container">
+ <div class="give-grid">
+ <article class="give-card">
+ <span class="give-card__icon"><%- h.icon('phone', 24) %></span>
+ <h2 class="give-card__title"><%= site.donate_momo_title %></h2>
+ <p class="give-card__text"><%= site.donate_momo_intro %></p>
+ <dl class="method">
+ <div>
+ <dt>Number</dt>
+ <dd class="method__value">
+ <span><%= site.donate_momo %></span>
+ <button class="copy" type="button" data-copy="<%= site.donate_momo.replace(/\s+/g, '') %>" aria-label="Copy the Mobile Money number">
+ <%- h.icon('copy', 14) %>
+ <span data-copy-label>Copy</span>
+ </button>
+ </dd>
+ </div>
+ <div>
+ <dt>Account name</dt>
+ <dd><%= site.donate_momo_name %></dd>
+ </div>
+ </dl>
+ </article>
+
+ <article class="give-card">
+ <span class="give-card__icon"><%- h.icon('bank', 24) %></span>
+ <h2 class="give-card__title"><%= site.donate_bank_title %></h2>
+ <p class="give-card__text"><%= site.donate_bank_intro %></p>
+ <dl class="method">
+ <div>
+ <dt>Bank</dt>
+ <dd><%= site.donate_bank %></dd>
+ </div>
+ <div>
+ <dt>Account name</dt>
+ <dd><%= site.donate_account_name %></dd>
+ </div>
+ <% if (site.donate_account_number) { %>
+ <div>
+ <dt>Account number</dt>
+ <dd class="method__value">
+ <span><%= site.donate_account_number %></span>
+ <button class="copy" type="button" data-copy="<%= site.donate_account_number %>" aria-label="Copy the account number">
+ <%- h.icon('copy', 14) %>
+ <span data-copy-label>Copy</span>
+ </button>
+ </dd>
+ </div>
+ <% } %>
+ <% if (site.donate_swift) { %>
+ <div>
+ <dt>SWIFT / sort code</dt>
+ <dd><%= site.donate_swift %></dd>
+ </div>
+ <% } %>
+ </dl>
+ <% if (!site.donate_account_number) { %>
+ <p class="give-card__note"><%= site.donate_bank_fallback %></p>
+ <% } %>
+ </article>
+
+ <article class="give-card">
+ <span class="give-card__icon"><%- h.icon('globe', 24) %></span>
+ <h2 class="give-card__title"><%= site.donate_intl_title %></h2>
+ <p class="give-card__text"><%= site.donate_intl_intro %></p>
+ <% if (site.donate_paypal) { %>
+ <a class="btn btn--primary btn--block" href="<%= site.donate_paypal %>" target="_blank" rel="noopener noreferrer">
+ Give securely <%- h.icon('arrow-up-right', 16) %>
+ </a>
+ <% } else { %>
+ <a class="btn btn--primary btn--block" href="mailto:<%= site.donate_email %>">
+ Request giving details <%- h.icon('mail', 16) %>
+ </a>
+ <% } %>
+ <p class="give-card__note"><%= site.donate_intl_note %></p>
+ </article>
+ </div>
+	</div>
+</section>
+
+<% var donateSteps = h.jsonList(site.donate_steps).filter(function (step) { return step && step.title; }); %>
+<% if (donateSteps.length) { %>
+<section class="section give-steps">
+	<div class="container give-steps__grid">
+ <div class="give-steps__head">
+ <p class="kicker"><span>02</span> <%= site.donate_steps_kicker %></p>
+ <h2 class="display"><%- h.inline(site.donate_steps_title) %></h2>
+ </div>
+ <ol class="give-steps__list">
+ <% donateSteps.forEach(function (step, index) { %>
+ <li>
+ <span class="give-steps__num"><%= String(index + 1).padStart(2, '0') %></span>
+ <div>
+ <h3><%= step.title %></h3>
+ <p><%= step.text %></p>
+ </div>
+ </li>
+ <% }); %>
+ </ol>
+	</div>
+</section>
+<% } %>
+
+<% var donateChecks = h.jsonList(site.donate_checks).filter(function (check) { return check && check.title; }); %>
+<section class="section transparency">
+	<div class="container">
+ <div class="transparency__panel">
+ <div class="transparency__head">
+ <p class="kicker kicker--light"><%= site.donate_trust_kicker %></p>
+ <h2><%- h.inline(site.donate_trust_title) %></h2>
+ </div>
+ <% if (donateChecks.length) { %>
+ <ul class="transparency__list">
+ <% donateChecks.forEach(function (check) { %>
+ <li>
+ <%- h.icon(check.icon, 20) %>
+ <div>
+ <h3><%= check.title %></h3>
+ <p><%= check.text %></p>
+ </div>
+ </li>
+ <% }); %>
+ </ul>
+ <% } %>
+ <p class="transparency__note"><%= site.donate_note %></p>
+ </div>
+	</div>
+</section>
+
+<% var donateFaq = h.jsonList(site.donate_faq).filter(function (item) { return item && item.question; }); %>
+<% if (donateFaq.length) { %>
+<section class="section faq">
+	<div class="container faq__grid">
+ <div class="faq__head">
+ <p class="kicker"><span>04</span> <%= site.donate_faq_kicker %></p>
+ <h2 class="display"><%- h.inline(site.donate_faq_title) %></h2>
+ </div>
+ <div class="faq__list">
+ <% donateFaq.forEach(function (item, index) { %>
+ <details class="faq-item" <%= index === 0 ? 'open' : '' %>>
+ <summary><span><%= item.question %></span><%- h.icon('plus', 18) %></summary>
+ <div class="faq-item__body"><p><%= item.answer %></p></div>
+ </details>
+ <% }); %>
+ </div>
+	</div>
+</section>
+<% } %>
+
+<section class="section section--talk">
+	<div class="container talk">
+ <div>
+ <p class="kicker"><%= site.donate_talk_kicker %></p>
+ <h2 class="display"><%- h.inline(site.donate_talk_title) %></h2>
+ </div>
+ <div class="talk__actions">
+ <a class="btn btn--primary" href="mailto:<%= site.donate_email %>"><%= site.donate_email %></a>
+ <a class="btn btn--ghost" href="tel:<%= site.contact_phone.replace(/[^0-9+]/g, '') %>"><%= site.contact_phone %></a>
+ </div>
+	</div>
+</section>
+
+<%- include('partials/footer') %>

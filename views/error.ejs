@@ -1,0 +1,24 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<section class="section error-404">
+	<div class="container">
+		<div class="error-404__grid">
+			<div class="error-404__main">
+				<p class="eyebrow">Error <%= status %></p>
+				<h1 class="error-404__title">Something went <em>wrong</em>.</h1>
+				<p class="error-404__text"><%= message %></p>
+				<ul class="error-404__links">
+					<li><a href="/">Homepage <%- h.icon('arrow-right', 14) %></a></li>
+					<li><a href="/contact">Contact us <%- h.icon('arrow-right', 14) %></a></li>
+				</ul>
+			</div>
+			<div class="error-404__aside" aria-hidden="true">
+				<span class="error-404__code"><%= status %></span>
+				<span class="error-404__seal"></span>
+			</div>
+		</div>
+	</div>
+</section>
+
+<%- include('partials/footer') %>

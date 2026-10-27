@@ -1,0 +1,39 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<section class="section error-404">
+	<div class="container">
+		<div class="error-404__grid">
+			<div class="error-404__main">
+				<p class="eyebrow">Error 404</p>
+				<h1 class="error-404__title">This page has <em>moved</em>.</h1>
+				<p class="error-404__text">The link may be old, or the page may have been renamed. Try a search, or start from one of these.</p>
+
+				<div class="search-panel">
+					<form class="search-form" role="search" method="get" action="/search">
+						<label class="screen-reader-text" for="q404">Search this site</label>
+						<input class="search-form__field" type="search" id="q404" name="q" placeholder="Search stories, programs, pages…">
+						<button class="search-form__submit" type="submit">
+							<%- h.icon('search', 18) %>
+							<span>Search</span>
+						</button>
+					</form>
+				</div>
+
+				<ul class="error-404__links">
+					<li><a href="/">Homepage <%- h.icon('arrow-right', 14) %></a></li>
+					<li><a href="/programs">Programs <%- h.icon('arrow-right', 14) %></a></li>
+					<li><a href="/impact">Impact <%- h.icon('arrow-right', 14) %></a></li>
+					<li><a href="/contact">Contact <%- h.icon('arrow-right', 14) %></a></li>
+				</ul>
+			</div>
+
+			<div class="error-404__aside" aria-hidden="true">
+				<span class="error-404__code">404</span>
+				<span class="error-404__seal"></span>
+			</div>
+		</div>
+	</div>
+</section>
+
+<%- include('partials/footer') %>

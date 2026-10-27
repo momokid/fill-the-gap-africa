@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title><%= meta.title %></title>
+	<meta name="description" content="<%= meta.description %>">
+	<link rel="canonical" href="<%= canonical %>">
+
+	<meta property="og:type" content="website">
+	<meta property="og:site_name" content="<%= site.site_name %>">
+	<meta property="og:title" content="<%= meta.title %>">
+	<meta property="og:description" content="<%= meta.description %>">
+	<meta property="og:url" content="<%= canonical %>">
+	<% if (meta.image) { %>
+	<meta property="og:image" content="<%= meta.image.startsWith('http') ? meta.image : baseUrl + meta.image %>">
+	<% } %>
+	<meta name="twitter:card" content="summary_large_image">
+
+	<link rel="icon" href="/img/icon-64.png" sizes="64x64" type="image/png">
+	<link rel="apple-touch-icon" href="/img/icon-180.png">
+	<meta name="theme-color" content="#ffffff">
+	<%
+	const bodyFonts = {
+		inter: { name: 'Inter', query: 'Inter:wght@400;500;600;700' },
+		manrope: { name: 'Manrope', query: 'Manrope:wght@400;500;600;700' },
+		dmsans: { name: 'DM Sans', query: 'DM+Sans:wght@400;500;600;700' },
+		sourcesans: { name: 'Source Sans 3', query: 'Source+Sans+3:wght@400;500;600;700' },
+		system: { name: 'System UI', query: '' }
+	};
+	const headingFonts = {
+		intertight: { name: 'Inter Tight', query: 'Inter+Tight:wght@400;500;600;700' },
+		inter: { name: 'Inter', query: 'Inter:wght@400;500;600;700' },
+		fraunces: { name: 'Fraunces', query: 'Fraunces:opsz,wght@9..144,400;600;700' },
+		dmserif: { name: 'DM Serif Display', query: 'DM+Serif+Display' },
+		playfair: { name: 'Playfair Display', query: 'Playfair+Display:wght@400;500;600;700' }
+	};
+	const bodyFont = bodyFonts[site.font_body] || bodyFonts.inter;
+	const headingFont = headingFonts[site.font_heading] || headingFonts.intertight;
+	const fontQueries = Array.from(new Set([bodyFont.query, headingFont.query].filter(Boolean)));
+	const headingStack = headingFont.name === 'System UI'
+		? "-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif"
+		: "'" + headingFont.name + "', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif";
+	const bodyStack = bodyFont.name === 'System UI'
+		? "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif"
+		: "'" + bodyFont.name + "', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif";
+	const baseSize = Math.min(24, Math.max(16, parseInt(site.font_base, 10) || 16));
+	const containerWidth = Math.min(1600, Math.max(960, parseInt(site.container_width, 10) || 1200));
+	const sectionSpacing = Math.min(160, Math.max(40, parseInt(site.section_spacing, 10) || 88));
+	const radiusValue = Math.min(32, Math.max(0, parseInt(site.radius, 10) || 10));
+	%>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<% if (fontQueries.length) { %>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=<%= fontQueries.join('&family=') %>&display=swap">
+	<% } %>
+	<link rel="stylesheet" href="/css/theme.css?v=11">
+	<style>
+		:root {
+			--sans: <%- bodyStack %>;
+			--display: <%- headingStack %>;
+			--brand: <%= site.color_brand %>;
+			--brand-strong: <%= site.color_brand_dark %>;
+			--brand-bright: color-mix(in srgb, <%= site.color_brand %> 55%, #ffffff);
+			--brand-soft: color-mix(in srgb, <%= site.color_brand %> 10%, #ffffff);
+			--cta: <%= site.color_cta %>;
+			--cta-dark: <%= site.color_cta_dark %>;
+			--max: <%= containerWidth %>px;
+			--section-y: <%= sectionSpacing %>px;
+			--radius: <%= radiusValue %>px;
+		}
+
+		html {
+			font-size: <%= baseSize %>px;
+		}
+
+		body {
+			font-size: 1rem;
+		}
+	</style>
+
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "NGO",
+		"name": "<%= site.site_name %>",
+		"description": "<%= site.site_description %>",
+		"url": "<%= baseUrl %>",
+		"email": "<%= site.contact_email %>",
+		"telephone": "<%= site.contact_phone %>",
+		"foundingDate": "2011",
+		"address": {
+			"@type": "PostalAddress",
+			"addressLocality": "Accra",
+			"addressCountry": "GH"
+		},
+		"sameAs": [<%- socials.map(function (s) { return JSON.stringify(s.url); }).join(', ') %>]
+	}
+	</script>
+</head>
+<body class="<%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="site">

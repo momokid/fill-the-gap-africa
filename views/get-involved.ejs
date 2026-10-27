@@ -1,0 +1,92 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<%- include('partials/page-hero', {
+	title: page.title,
+	eyebrow: page.hero_eyebrow,
+	titleHtml: h.inline(page.hero_title || page.title),
+	lede: page.hero_lede
+}) %>
+
+<% var involvedPaths = h.jsonList(site.involved_paths).filter(function (path) { return path && path.title; }); %>
+<% if (involvedPaths.length) { %>
+<section class="section paths">
+	<div class="container">
+ <div class="paths__grid">
+ <% involvedPaths.forEach(function (path, index) { %>
+ <% var primary = index === 0; %>
+ <% var link = String(path.link_url || ''); %>
+ <% if (link === 'mailto') link = 'mailto:' + site.contact_email; %>
+ <article class="path-card<%= primary ? ' path-card--primary' : '' %>">
+ <span class="path-card__num"><%= String(index + 1).padStart(2, '0') %></span>
+ <span class="path-card__icon"><%- h.icon(path.icon, 24) %></span>
+ <h2 class="path-card__title"><%= path.title %></h2>
+ <p class="path-card__text"><%= path.text %></p>
+ <% var pathPoints = String(path.points || '').split(/\r?\n/).map(function (point) { return point.trim(); }).filter(Boolean); %>
+ <% if (pathPoints.length) { %>
+ <ul class="path-card__list">
+ <% pathPoints.forEach(function (point) { %>
+ <li><%= point %></li>
+ <% }); %>
+ </ul>
+ <% } %>
+ <% if (path.link_label && link) { %>
+ <a class="btn <%= primary ? 'btn--accent' : 'btn--ghost' %> btn--block" href="<%= link %>"><%= path.link_label %> <%- h.icon('arrow-right', 16) %></a>
+ <% } %>
+ </article>
+ <% }); %>
+ </div>
+	</div>
+</section>
+<% } %>
+
+<% var involvedNeeds = h.jsonList(site.involved_needs); %>
+<% if (involvedNeeds.length) { %>
+<section class="section needs">
+	<div class="container needs__grid">
+ <div class="needs__head">
+ <p class="kicker"><span>02</span> <%= site.involved_needs_kicker %></p>
+ <h2 class="display"><%- h.inline(site.involved_needs_title) %></h2>
+ <p><%= site.involved_needs_note %></p>
+ </div>
+
+ <% var needLabels = { funding: 'Funding', skills: 'Skills', inkind: 'In-kind' }; %>
+ <ul class="need-list">
+ <% involvedNeeds.forEach(function (need) { %>
+ <li class="need">
+ <span class="need__tag need__tag--<%= need.tag %>"><%= needLabels[need.tag] || 'Funding' %></span>
+ <div class="need__body">
+ <h3><%= need.title %></h3>
+ <p><%= need.text %></p>
+ </div>
+ <a class="need__link" href="mailto:<%= site.contact_email %>" aria-label="Ask about this need"><%- h.icon('arrow-up-right', 16) %></a>
+ </li>
+ <% }); %>
+ </ul>
+	</div>
+</section>
+<% } %>
+
+<% var involvedFaq = h.jsonList(site.involved_faq); %>
+<% if (involvedFaq.length) { %>
+<section class="section faq">
+	<div class="container faq__grid">
+ <div class="faq__head">
+ <p class="kicker"><span>03</span> <%= site.involved_faq_kicker %></p>
+ <h2 class="display"><%- h.inline(site.involved_faq_title) %></h2>
+ </div>
+
+ <div class="faq__list">
+ <% involvedFaq.forEach(function (item, index) { %>
+ <details class="faq-item" <%= index === 0 ? 'open' : '' %>>
+ <summary><span><%= item.question %></span><%- h.icon('plus', 18) %></summary>
+ <div class="faq-item__body"><p><%= item.answer %></p></div>
+ </details>
+ <% }); %>
+ </div>
+	</div>
+</section>
+<% } %>
+
+<%- include('partials/cta') %>
+<%- include('partials/footer') %>

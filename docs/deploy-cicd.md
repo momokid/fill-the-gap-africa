@@ -14,7 +14,7 @@ GitHub Actions: npm ci + npm test (Node 22 and 24)
 SSH push of the tested commit → ~/repositories/<repo> on cPanel
         │  cPanel post-receive hook
         ▼
-.cpanel.yml: rsync code → npm ci --omit=dev → touch tmp/restart.txt
+.cpanel.yml: copy code → npm ci --omit=dev → touch tmp/restart.txt
         │
         ▼
 Health check: <SITE_URL>/robots.txt contains the app's Sitemap line
@@ -166,7 +166,7 @@ The database is not versioned. To restore content, upload a backup of
 | `CPANEL_REPO_PATH must be an absolute path` | Use the full path from the cPanel clone URL, starting with `/home/`. |
 | Push succeeds, site unchanged | Open the job log: if the hook did not run, the pushed branch is not the one cPanel has checked out. Set `CPANEL_BRANCH`. Confirm `.cpanel.yml` is at the repository root. |
 | `No cPanel Node.js virtualenv at ~/nodevenv/...` | `APP_NAME` does not match the application root, or the Node.js app was not created. |
-| `rsync is required on the server` | Ask the host to install `rsync` (standard on cPanel/CloudLinux). |
+| `Build completed with exit code 1` in the deploy log | Read `~/.cpanel/logs/vc_*_git_deploy.log`; the failing task and its output are printed directly above the error. |
 | 503 after deploy | cPanel → Setup Node.js App → log. Usually a missing `.env`, wrong startup file, or an unsupported Node version. |
 | Health check fails but the site loads | `/robots.txt` is still the cPanel placeholder (“It works!”), so the deploy did not run; check the cPanel hook output and `.cpanel.yml`. Also confirm `SITE_URL`. |
 | Deploy times out during `npm ci` | Slow shared host. Retry from **Actions → Run workflow**; if it repeats, replace `npm ci` with `npm install --omit=dev` in `.cpanel.yml`. |

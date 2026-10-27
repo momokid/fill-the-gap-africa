@@ -5,7 +5,7 @@
   (or a manual run from `master`) by SSH force-pushing the tested commit to the
   cPanel-managed Git repository. Pull requests test only. Health check hits
   `<SITE_URL>/robots.txt` after the push.
-- `.cpanel.yml`: cPanel post-receive tasks rsync only code directories, copy the
+- `.cpanel.yml`: cPanel post-receive tasks copy only code directories, copy the
   top-level code files, run `npm ci --omit=dev` in the detected
   `~/nodevenv/<APP_NAME>/*` virtualenv, chmod `data/` + uploads, and touch
   `tmp/restart.txt` for Passenger.
@@ -18,7 +18,7 @@
 ## Decisions
 - Chose cPanel push deployment instead of rsync-over-SSH: cPanel's post-receive
   hook runs `.cpanel.yml`, so the workflow needs no remote shell scripts.
-- The app root is a whitelist sync, not `rsync --delete` on the whole folder, so
+- The app root is a whitelist copy, not a delete-everything sync, so
   `.env`, `data/site.db`, uploads and host-specific files cannot be removed.
 - The workflow force-pushes because GitHub `master` is the source of truth and the
   cPanel repo is a deploy target.

@@ -14,20 +14,18 @@ deployment:
     - export DEPLOYPATH="$HOME/$APP_NAME"
     - export REPO_ROOT="$PWD"
 
-    # Fail early if the host lacks rsync instead of half-deploying the code.
-    - 'command -v rsync >/dev/null 2>&1 || { echo "rsync is required on the server"; exit 1; }'
-
-    # The app root and its writable folders must exist before the first sync.
+    # The app root and its writable folders must exist before the first copy.
     - /bin/mkdir -p "$DEPLOYPATH/data" "$DEPLOYPATH/public/uploads" "$DEPLOYPATH/tmp"
 
-    # Code directories: --delete removes files that were removed from Git.
-    - rsync -a --delete "$REPO_ROOT/lib/" "$DEPLOYPATH/lib/"
-    - rsync -a --delete "$REPO_ROOT/routes/" "$DEPLOYPATH/routes/"
-    - rsync -a --delete "$REPO_ROOT/views/" "$DEPLOYPATH/views/"
-    - rsync -a --delete "$REPO_ROOT/scripts/" "$DEPLOYPATH/scripts/"
-    - rsync -a --delete "$REPO_ROOT/public/css/" "$DEPLOYPATH/public/css/"
-    - rsync -a --delete "$REPO_ROOT/public/js/" "$DEPLOYPATH/public/js/"
-    - rsync -a --delete "$REPO_ROOT/public/img/" "$DEPLOYPATH/public/img/"
+    # Code directories: remove then copy, so files deleted from Git disappear.
+    # Plain cp is used because some cPanel hosts (including this one) lack rsync.
+    - /bin/rm -rf "$DEPLOYPATH/lib" && /bin/cp -R "$REPO_ROOT/lib" "$DEPLOYPATH/lib"
+    - /bin/rm -rf "$DEPLOYPATH/routes" && /bin/cp -R "$REPO_ROOT/routes" "$DEPLOYPATH/routes"
+    - /bin/rm -rf "$DEPLOYPATH/views" && /bin/cp -R "$REPO_ROOT/views" "$DEPLOYPATH/views"
+    - /bin/rm -rf "$DEPLOYPATH/scripts" && /bin/cp -R "$REPO_ROOT/scripts" "$DEPLOYPATH/scripts"
+    - /bin/rm -rf "$DEPLOYPATH/public/css" && /bin/cp -R "$REPO_ROOT/public/css" "$DEPLOYPATH/public/css"
+    - /bin/rm -rf "$DEPLOYPATH/public/js" && /bin/cp -R "$REPO_ROOT/public/js" "$DEPLOYPATH/public/js"
+    - /bin/rm -rf "$DEPLOYPATH/public/img" && /bin/cp -R "$REPO_ROOT/public/img" "$DEPLOYPATH/public/img"
 
     # Top-level code files. .env is deliberately absent.
     - /bin/cp "$REPO_ROOT/app.js" "$REPO_ROOT/config.js" "$REPO_ROOT/package.json" "$REPO_ROOT/package-lock.json" "$REPO_ROOT/.env.example" "$DEPLOYPATH/"
